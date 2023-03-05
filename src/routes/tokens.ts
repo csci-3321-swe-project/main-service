@@ -1,23 +1,24 @@
-import { Role } from "@prisma/client";
 import { Router } from "express";
 import { z } from "zod";
 import client from "../utilities/client";
+import { sign } from "../utilities/tokens";
 
 const router = Router();
 
 router.post("/", async (req, res, next) => {
   const schema = z.object({
     email: z.string().email(),
-    firstName: z.string(),
-    lastName: z.string(),
-    role: z.nativeEnum(Role),
   });
-
   const body = schema.parse(req.body);
 
   try {
-    await client.user.create({ data: body });
-    res.sendStatus(201);
+    const user = await client.user.findUniqueOrThrow({
+      where: { email: body.email },
+    });
+
+    const token = sign({ email: user.email });
+
+    res.status(201).send(token);
   } catch (err) {
     next(err);
   }
