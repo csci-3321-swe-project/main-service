@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  PROFESSOR
+  ADMINISTRATOR
+}
+
+enum Department {
+  ART_HISTORY
+  BIOLOGY
+  CHEMISTRY
+  CLASSICAL_STUDIES
+  COMMUNICATION
+  COMPUTER_SCIENCE
+  ECONOMICS
+  EDUCATION
+  ENGINEERING_SCIENCE
+  ENGLISH
+  GEOSCIENCES
+  HEALTH_CARE_ADMINISTRATION
+  HISTORY
+  MATHMATICS
+  MUSIC
+  PHILLOSOPHY
+  // ...and more if we want to include a complete list.
+}
+
+enum DaysOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum Term {
+  SPRING_2021
+  FALL_2021
+  SPRING_2022
+  FALL_2022
+  SPRING_2023
+}
+
+model User {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  role          Role
+  email         String          @unique
+  name          String?
+  urseSections  CourseSection[]
+  Registrations Registration[]
+}
+
+model Registration {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  user            User          @relation(fields: [userId], references: [id])
+  userId          String        @db.ObjectId
+  courseSection   CourseSection @relation(fields: [courseSectionId], references: [id])
+  courseSectionId String        @db.ObjectId
+}
+
+model Course {
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  term           Term
+  department     Department
+  code           Int
+  description    String
+  CourseSections CourseSection[]
+}
+
+type Meeting {
+  daysOfWeek DaysOfWeek[]
+  startTime  DateTime
+  endTime    DateTime
+  location   String
+}
+
+model CourseSection {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  Course        Course         @relation(fields: [courseId], references: [id])
+  courseId      String         @db.ObjectId
+  meetings      Meeting[]
+  instructor    User           @relation(fields: [instructorId], references: [id])
+  instructorId  String         @db.ObjectId
+  Registrations Registration[]
+}
