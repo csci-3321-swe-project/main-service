@@ -2,7 +2,8 @@ import { RequestHandler } from "express";
 import client from "../utilities/client";
 import { parse } from "../utilities/tokens";
 
-const verifyToken: RequestHandler = async (req, res, next) => {
+const authenticate: RequestHandler = async (req, res, next) => {
+  // Parse token from headers
   const bearerHeader = req.headers["authorization"];
 
   if (!bearerHeader) {
@@ -10,7 +11,6 @@ const verifyToken: RequestHandler = async (req, res, next) => {
     return;
   }
 
-  // Verify token
   const [identifier, token] = bearerHeader.split(" ");
 
   if (identifier !== "Bearer") {
@@ -18,6 +18,7 @@ const verifyToken: RequestHandler = async (req, res, next) => {
     return;
   }
 
+  // Verify token
   const payload = parse(token);
 
   // Attach user object to request data
@@ -28,4 +29,4 @@ const verifyToken: RequestHandler = async (req, res, next) => {
   next();
 };
 
-export default verifyToken;
+export default authenticate;

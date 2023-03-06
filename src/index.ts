@@ -1,6 +1,8 @@
+import cors from "cors";
 import express from "express";
 import errorHandler from "./error-handlers/error-handler";
-import verifyToken from "./middleware/verify-token";
+import authenticate from "./middleware/authenticate";
+import account from "./routes/account";
 import courses from "./routes/courses";
 import tokens from "./routes/tokens";
 import users from "./routes/users";
@@ -11,10 +13,12 @@ const port = environment.PORT;
 
 // Middleware
 app.use(express.json());
+app.use(cors());
 
 // Routes
-app.use("/courses", verifyToken, courses);
-app.use("/users", verifyToken, users);
+app.use("/courses", authenticate, courses);
+app.use("/account", authenticate, account);
+app.use("/users", users);
 app.use("/tokens", tokens);
 
 // Error Handlers
