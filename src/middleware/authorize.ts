@@ -25,7 +25,7 @@ const authorize = (roles: Role[]) => {
 
     // Attach user object to request data
     const user = await client.user.findUnique({
-      where: { email: payload.email },
+      where: { id: payload.userId },
     });
 
     if (!user) {

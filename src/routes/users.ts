@@ -6,6 +6,7 @@ import client from "../utilities/client";
 const router = Router();
 
 router.post("/", async (req, res, next) => {
+  // Validate the request body
   const schema = z.object({
     email: z.string().email(),
     firstName: z.string(),
@@ -16,7 +17,8 @@ router.post("/", async (req, res, next) => {
   const body = schema.parse(req.body);
 
   try {
-    await client.user.create({ data: body });
+    // Create a mock user in the database
+    await client.user.create({ data: { isMock: true, ...body } });
     res.sendStatus(201);
   } catch (err) {
     next(err);
