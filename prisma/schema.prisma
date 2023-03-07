@@ -33,7 +33,7 @@ enum Department {
   // ...and more if we want to include a complete list.
 }
 
-enum DaysOfWeek {
+enum DayOfWeek {
   MONDAY
   TUESDAY
   WEDNESDAY
@@ -80,7 +80,7 @@ model Course {
 }
 
 type Meeting {
-  daysOfWeek DaysOfWeek[]
+  daysOfWeek DayOfWeek[]
   startTime  DateTime
   endTime    DateTime
   location   String
