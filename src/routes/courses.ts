@@ -17,8 +17,7 @@ router.post("/", async (req, res, next) => {
     term: z.nativeEnum(Term),
     department: z.nativeEnum(Department),
     code: z.number(),
-    description: z.string(),
-    // CourseSections: ZodSchema(CourseSection),
+    description: z.string()
   });
 
   const body = schema.parse(req.body);
@@ -27,7 +26,6 @@ router.post("/", async (req, res, next) => {
     await client.course.create({ data: body });
     res.sendStatus(201);
   } catch (err) {
-    console.log(err)
     next(err);
   }
 });
