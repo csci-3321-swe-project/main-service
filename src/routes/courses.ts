@@ -34,10 +34,6 @@ router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   }
 });
 
-router.delete("/", authorize(["ADMINISTRATOR"]), (req, res, next) => {
-  // TODO: Delete a class, and any associated records
-});
-
 router.get(
   "/:courseId",
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
@@ -45,6 +41,10 @@ router.get(
     // TODO: Retrieve course information
   }
 );
+
+router.delete("/:courseId", authorize(["ADMINISTRATOR"]), (req, res, next) => {
+  // TODO: Delete a course, and any associated records
+});
 
 router.put("/:courseId", authorize(["ADMINISTRATOR"]), (req, res, next) => {
   // TODO: Update course information
