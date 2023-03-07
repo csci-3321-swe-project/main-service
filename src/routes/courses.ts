@@ -1,4 +1,7 @@
 import { Router } from "express";
+import { z } from "zod";
+import client from "../utilities/client";
+import { Term, Department, Course } from "@prisma/client"
 
 const router = Router();
 
@@ -6,8 +9,25 @@ router.get("/", (req, res, next) => {
   // ALL: Retrieve course information given query and filters.
 });
 
-router.post("/", (req, res, next) => {
+router.post("/", async (req, res, next) => {
   // ADMIN: Create class
+  const schema = z.object({
+    id: z.string(),
+    name: z.string(),
+    term: z.nativeEnum(Term),
+    department: z.nativeEnum(Department),
+    code: z.number(),
+    description: z.string()
+  });
+
+  const body = schema.parse(req.body);
+
+  try {
+    await client.course.create({ data: body });
+    res.sendStatus(201);
+  } catch (err) {
+    next(err);
+  }
 });
 
 router.delete("/", (req, res, next) => {
