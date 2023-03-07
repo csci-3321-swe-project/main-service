@@ -69,13 +69,13 @@ router.post(
 
     const body = schema.parse(req.body);
 
-    const courseSection = Object.assign(
-      { courseId: req.params.courseId },
-      body
-    );
-
     try {
-      await client.courseSection.create({ data: courseSection });
+      await client.courseSection.create({
+        data: {
+          courseId: req.params.courseId,
+          ...body,
+        },
+      });
       res.sendStatus(201);
     } catch (err) {
       next(err);
