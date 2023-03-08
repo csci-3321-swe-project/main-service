@@ -49,7 +49,6 @@ router.get("/:courseId", async (req, res, next) => {
 router.put("/:courseId", async (req, res, next) => {
   // ADMIN: Update course information
   const schema = z.object({
-    id: z.optional(z.string()),
     name: z.optional(z.string()),
     term: z.optional(z.nativeEnum(Term)),
     department: z.optional(z.nativeEnum(Department)),
@@ -58,8 +57,6 @@ router.put("/:courseId", async (req, res, next) => {
   });
 
   const body = schema.parse(req.body)
-
-  console.log(body)
 
   try {
     await client.course.update({
