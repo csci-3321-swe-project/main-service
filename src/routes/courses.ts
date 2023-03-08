@@ -1,4 +1,4 @@
-import { DaysOfWeek, Department, Term } from "@prisma/client";
+import { DayOfWeek, Department, Term } from "@prisma/client";
 import { Router } from "express";
 import { z } from "zod";
 import authorize from "../middleware/authorize";
@@ -58,7 +58,7 @@ router.post(
       id: z.string(),
       meetings: z.array(
         z.object({
-          daysOfWeek: z.array(z.nativeEnum(DaysOfWeek)),
+          daysOfWeek: z.array(z.nativeEnum(DayOfWeek)),
           startTime: z.string().datetime(),
           endTime: z.string().datetime(),
           location: z.string(),

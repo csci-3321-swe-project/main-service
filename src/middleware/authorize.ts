@@ -6,14 +6,14 @@ import { parse } from "../utilities/tokens";
 const authorize = (roles: Role[]) => {
   const middleware: RequestHandler = async (req, res, next) => {
     // Parse token from headers
-    const bearerHeader = req.headers["authorization"];
+    const header = req.headers["authorization"];
 
-    if (!bearerHeader) {
+    if (!header) {
       res.sendStatus(401);
       return;
     }
 
-    const [identifier, token] = bearerHeader.split(" ");
+    const [identifier, token] = header.split(" ");
 
     if (identifier !== "Bearer") {
       res.sendStatus(401);
@@ -36,7 +36,7 @@ const authorize = (roles: Role[]) => {
     res.locals.user = user;
 
     // Check user roles against required roles
-    if (!(user.role in roles)) {
+    if (!roles.includes(user.role)) {
       res.sendStatus(401);
       return;
     }
