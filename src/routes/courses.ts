@@ -46,8 +46,17 @@ router.get("/:courseId", async (req, res, next) => {
   }
 });
 
-router.put("/:courseId", (req, res, next) => {
+router.put("/:courseId", async (req, res, next) => {
   // ADMIN: Update course information
+  try {
+    await client.course.update({
+      where: { id: req.params.courseId },
+      data: req.body
+    })
+    res.sendStatus(200)
+  } catch(err) {
+    next(err)
+  }
 });
 
 router.post("/:courseId/sections", async (req, res, next) => {
