@@ -34,12 +34,39 @@ router.delete("/", (req, res, next) => {
   // ADMIN: Delete class. Waterfall delete all course sections, which should waterfall delete all registrations
 });
 
-router.get("/:courseId", (req, res, next) => {
+router.get("/:courseId", async (req, res, next) => {
   // ALL: Retrieve course information
+  try {
+    const course = await client.course.findUniqueOrThrow({
+      where: { id: req.params.courseId }
+    })
+    res.status(200).send(course)
+  } catch(err) {
+    next(err)
+  }
 });
 
-router.put("/:courseId", (req, res, next) => {
+router.put("/:courseId", async (req, res, next) => {
   // ADMIN: Update course information
+  const schema = z.object({
+    name: z.optional(z.string()),
+    term: z.optional(z.nativeEnum(Term)),
+    department: z.optional(z.nativeEnum(Department)),
+    code: z.optional(z.number()),
+    description: z.optional(z.string())
+  });
+
+  const body = schema.parse(req.body)
+
+  try {
+    await client.course.update({
+      where: { id: req.params.courseId },
+      data: req.body
+    })
+    res.sendStatus(200)
+  } catch(err) {
+    next(err)
+  }
 });
 
 router.post("/:courseId/sections", async (req, res, next) => {
