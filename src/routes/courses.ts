@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import client from "../utilities/client";
-import { Term, Department, Course } from "@prisma/client"
+import { Term, Department, Course, DaysOfWeek } from "@prisma/client"
 
 const router = Router();
 
@@ -42,8 +42,32 @@ router.put("/:courseId", (req, res, next) => {
   // ADMIN: Update course information
 });
 
-router.post("/:courseId/sections", (req, res, next) => {
+router.post("/:courseId/sections", async (req, res, next) => {
   // ADMIN: Create new course section
+  const schema = z.object({
+    id: z.string(),
+    meetings: z.array(z.object({
+      daysOfWeek: z.array(z.nativeEnum(DaysOfWeek)),
+      startTime: z.string().datetime(),
+      endTime: z.string().datetime(),
+      location: z.string()
+    })),
+    instructorId: z.string(),
+  });
+
+  const body = schema.parse(req.body)
+
+  const courseSection = Object.assign(  
+    { courseId:req.params.courseId },
+    body
+  )
+
+  try {
+    await client.courseSection.create({ data: courseSection });
+    res.sendStatus(201);
+  } catch (err) {
+    next(err);
+  }
 });
 
 router.get("/:courseId/sections/:sectionId", (req, res, next) => {
