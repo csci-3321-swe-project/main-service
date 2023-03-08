@@ -34,8 +34,16 @@ router.delete("/", (req, res, next) => {
   // ADMIN: Delete class. Waterfall delete all course sections, which should waterfall delete all registrations
 });
 
-router.get("/:courseId", (req, res, next) => {
+router.get("/:courseId", async (req, res, next) => {
   // ALL: Retrieve course information
+  try {
+    const course = await client.course.findUniqueOrThrow({
+      where: { id: req.params.courseId }
+    })
+    res.status(200).send(course)
+  } catch(err) {
+    next(err)
+  }
 });
 
 router.put("/:courseId", (req, res, next) => {
