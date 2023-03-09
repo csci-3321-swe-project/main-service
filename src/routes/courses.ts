@@ -27,8 +27,9 @@ router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   const body = schema.parse(req.body);
 
   try {
-    await client.course.create({ data: body });
-    res.sendStatus(201);
+    const newCourse = await client.course.create({ data: body });
+
+    res.status(201).send(newCourse);
   } catch (err) {
     next(err);
   }
@@ -37,43 +38,39 @@ router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
 router.get(
   "/:courseId",
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
-  (req, res, next) => {
-    // TODO: Retrieve course information
+  async (req, res, next) => {
+    try {
+      const course = await client.course.findUniqueOrThrow({
+        where: { id: req.params.courseId },
+      });
+
+      res.status(200).send(course);
+    } catch (err) {
+      next(err);
+    }
   }
 );
 
-router.get("/:courseId", async (req, res, next) => {
-  // ALL: Retrieve course information
-  try {
-    const course = await client.course.findUniqueOrThrow({
-      where: { id: req.params.courseId }
-    })
-    res.status(200).send(course)
-  } catch(err) {
-    next(err)
-  }
-});
-
 router.put("/:courseId", async (req, res, next) => {
-  // ADMIN: Update course information
   const schema = z.object({
     name: z.optional(z.string()),
     term: z.optional(z.nativeEnum(Term)),
     department: z.optional(z.nativeEnum(Department)),
     code: z.optional(z.number()),
-    description: z.optional(z.string())
+    description: z.optional(z.string()),
   });
 
-  const body = schema.parse(req.body)
+  const body = schema.parse(req.body);
 
   try {
-    await client.course.update({
+    const updatedCourse = await client.course.update({
       where: { id: req.params.courseId },
-      data: req.body
-    })
-    res.sendStatus(200)
-  } catch(err) {
-    next(err)
+      data: body,
+    });
+
+    res.status(200).send(updatedCourse);
+  } catch (err) {
+    next(err);
   }
 });
 
@@ -82,7 +79,7 @@ router.post(
   authorize(["ADMINISTRATOR"]),
   async (req, res, next) => {
     const schema = z.object({
-      id: z.string(),
+      instructorId: z.string(),
       meetings: z.array(
         z.object({
           daysOfWeek: z.array(z.nativeEnum(DayOfWeek)),
@@ -91,19 +88,19 @@ router.post(
           location: z.string(),
         })
       ),
-      instructorId: z.string(),
     });
 
     const body = schema.parse(req.body);
 
     try {
-      await client.courseSection.create({
+      const newCourseSection = await client.courseSection.create({
         data: {
           courseId: req.params.courseId,
           ...body,
         },
       });
-      res.sendStatus(201);
+
+      res.status(201).send(newCourseSection);
     } catch (err) {
       next(err);
     }
