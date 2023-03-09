@@ -16,7 +16,6 @@ router.get(
 
 router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   const schema = z.object({
-    id: z.string(),
     name: z.string(),
     term: z.nativeEnum(Term),
     department: z.nativeEnum(Department),
