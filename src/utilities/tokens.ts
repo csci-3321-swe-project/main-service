@@ -3,7 +3,7 @@ import { z } from "zod";
 import environment from "./environment";
 
 const payloadSchema = z.object({
-  email: z.string().email(),
+  userId: z.string(),
 });
 
 type Payload = z.infer<typeof payloadSchema>;
