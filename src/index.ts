@@ -1,9 +1,9 @@
 import cors from "cors";
 import express from "express";
 import errorHandler from "./error-handlers/error-handler";
-import authenticate from "./middleware/authenticate";
 import account from "./routes/account";
 import courses from "./routes/courses";
+import options from "./routes/options";
 import tokens from "./routes/tokens";
 import users from "./routes/users";
 import environment from "./utilities/environment";
@@ -16,10 +16,11 @@ app.use(express.json());
 app.use(cors());
 
 // Routes
-app.use("/courses", authenticate, courses);
-app.use("/account", authenticate, account);
+app.use("/courses", courses);
+app.use("/account", account);
 app.use("/users", users);
 app.use("/tokens", tokens);
+app.use("/options", options);
 
 // Error Handlers
 app.use(errorHandler);

@@ -21,6 +21,7 @@
   "homepage": "https://github.com/csci-3321-swe-project/main-service#readme",
   "dependencies": {
     "@prisma/client": "^4.11.0",
+    "case": "^1.6.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
