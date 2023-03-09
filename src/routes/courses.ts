@@ -42,12 +42,39 @@ router.get(
   }
 );
 
-router.delete("/:courseId", authorize(["ADMINISTRATOR"]), (req, res, next) => {
-  // TODO: Delete a course, and any associated records
+router.get("/:courseId", async (req, res, next) => {
+  // ALL: Retrieve course information
+  try {
+    const course = await client.course.findUniqueOrThrow({
+      where: { id: req.params.courseId }
+    })
+    res.status(200).send(course)
+  } catch(err) {
+    next(err)
+  }
 });
 
-router.put("/:courseId", authorize(["ADMINISTRATOR"]), (req, res, next) => {
-  // TODO: Update course information
+router.put("/:courseId", async (req, res, next) => {
+  // ADMIN: Update course information
+  const schema = z.object({
+    name: z.optional(z.string()),
+    term: z.optional(z.nativeEnum(Term)),
+    department: z.optional(z.nativeEnum(Department)),
+    code: z.optional(z.number()),
+    description: z.optional(z.string())
+  });
+
+  const body = schema.parse(req.body)
+
+  try {
+    await client.course.update({
+      where: { id: req.params.courseId },
+      data: req.body
+    })
+    res.sendStatus(200)
+  } catch(err) {
+    next(err)
+  }
 });
 
 router.post(
