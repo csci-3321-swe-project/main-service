@@ -16,6 +16,7 @@ router.get(
 
 router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   const schema = z.object({
+    id: z.string(),
     name: z.string(),
     term: z.nativeEnum(Term),
     department: z.nativeEnum(Department),
@@ -26,9 +27,8 @@ router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   const body = schema.parse(req.body);
 
   try {
-    const newCourse = await client.course.create({ data: body });
-
-    res.status(201).send(newCourse);
+    await client.course.create({ data: body });
+    res.sendStatus(201);
   } catch (err) {
     next(err);
   }
@@ -37,39 +37,43 @@ router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
 router.get(
   "/:courseId",
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
-  async (req, res, next) => {
-    try {
-      const course = await client.course.findUniqueOrThrow({
-        where: { id: req.params.courseId },
-      });
-
-      res.status(200).send(course);
-    } catch (err) {
-      next(err);
-    }
+  (req, res, next) => {
+    // TODO: Retrieve course information
   }
 );
 
+router.get("/:courseId", async (req, res, next) => {
+  // ALL: Retrieve course information
+  try {
+    const course = await client.course.findUniqueOrThrow({
+      where: { id: req.params.courseId }
+    })
+    res.status(200).send(course)
+  } catch(err) {
+    next(err)
+  }
+});
+
 router.put("/:courseId", async (req, res, next) => {
+  // ADMIN: Update course information
   const schema = z.object({
     name: z.optional(z.string()),
     term: z.optional(z.nativeEnum(Term)),
     department: z.optional(z.nativeEnum(Department)),
     code: z.optional(z.number()),
-    description: z.optional(z.string()),
+    description: z.optional(z.string())
   });
 
-  const body = schema.parse(req.body);
+  const body = schema.parse(req.body)
 
   try {
-    const updatedCourse = await client.course.update({
+    await client.course.update({
       where: { id: req.params.courseId },
-      data: body,
-    });
-
-    res.status(200).send(updatedCourse);
-  } catch (err) {
-    next(err);
+      data: req.body
+    })
+    res.sendStatus(200)
+  } catch(err) {
+    next(err)
   }
 });
 
@@ -78,7 +82,7 @@ router.post(
   authorize(["ADMINISTRATOR"]),
   async (req, res, next) => {
     const schema = z.object({
-      instructorId: z.string(),
+      id: z.string(),
       meetings: z.array(
         z.object({
           daysOfWeek: z.array(z.nativeEnum(DayOfWeek)),
@@ -87,19 +91,19 @@ router.post(
           location: z.string(),
         })
       ),
+      instructorId: z.string(),
     });
 
     const body = schema.parse(req.body);
 
     try {
-      const newCourseSection = await client.courseSection.create({
+      await client.courseSection.create({
         data: {
           courseId: req.params.courseId,
           ...body,
         },
       });
-
-      res.status(201).send(newCourseSection);
+      res.sendStatus(201);
     } catch (err) {
       next(err);
     }
@@ -141,8 +145,27 @@ router.put(
 router.post(
   "/:courseId/sections/:sectionId/registrations",
   authorize(["STUDENT"]),
-  (req, res, next) => {
-    // TODO: Register current active user for course
+  async (req, res, next) => {
+    const schema = z.object({
+      id: z.string(),
+      userId: z.string()
+    })
+
+    const body = schema.parse(req.body);
+
+    try {
+      await client.registration.create({
+        data: {
+          courseSectionId: req.params.courseId,
+          ...body,
+        },
+      });
+      console.log("data created")
+      res.sendStatus(201);
+    } catch (err) {
+      console.log(err)
+      next(err);
+    }
   }
 );
 
