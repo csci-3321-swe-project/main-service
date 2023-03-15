@@ -3,6 +3,7 @@ import { Router } from "express";
 import { z } from "zod";
 import authorize from "../middleware/authorize";
 import client from "../utilities/client";
+import { TimeRange } from "../utilities/time-range";
 
 const router = Router();
 
@@ -23,9 +24,8 @@ router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
     description: z.string(),
   });
 
-  const body = schema.parse(req.body);
-
   try {
+    const body = schema.parse(req.body);
     const newCourse = await client.course.create({ data: body });
 
     res.status(201).send(newCourse);
@@ -41,6 +41,7 @@ router.get(
     try {
       const course = await client.course.findUniqueOrThrow({
         where: { id: req.params.courseId },
+        include: { courseSections: true },
       });
 
       res.status(200).send(course);
@@ -50,48 +51,63 @@ router.get(
   }
 );
 
-router.put("/:courseId", async (req, res, next) => {
-  const schema = z.object({
-    name: z.optional(z.string()),
-    term: z.optional(z.nativeEnum(Term)),
-    department: z.optional(z.nativeEnum(Department)),
-    code: z.optional(z.number()),
-    description: z.optional(z.string()),
-  });
-
-  const body = schema.parse(req.body);
-
-  try {
-    const updatedCourse = await client.course.update({
-      where: { id: req.params.courseId },
-      data: body,
+router.put(
+  "/:courseId",
+  authorize(["ADMINISTRATOR"]),
+  async (req, res, next) => {
+    const schema = z.object({
+      name: z.optional(z.string()),
+      term: z.optional(z.nativeEnum(Term)),
+      department: z.optional(z.nativeEnum(Department)),
+      code: z.optional(z.number()),
+      description: z.optional(z.string()),
     });
 
-    res.status(200).send(updatedCourse);
-  } catch (err) {
-    next(err);
+    try {
+      const body = schema.parse(req.body);
+      const updatedCourse = await client.course.update({
+        where: { id: req.params.courseId },
+        data: body,
+      });
+
+      res.status(200).send(updatedCourse);
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 router.post(
   "/:courseId/sections",
   authorize(["ADMINISTRATOR"]),
   async (req, res, next) => {
     const schema = z.object({
-      instructorId: z.string(),
-      meetings: z.array(
-        z.object({
-          daysOfWeek: z.array(z.nativeEnum(DayOfWeek)),
-          startTime: z.string().datetime(),
-          endTime: z.string().datetime(),
-          location: z.string(),
-        })
-      ),
+      instructorIds: z.array(z.string()).nonempty(),
+      meetings: z
+        .array(
+          z.object({
+            daysOfWeek: z.array(z.nativeEnum(DayOfWeek)).nonempty(),
+            startHour: z.number(),
+            startMinute: z.number(),
+            endHour: z.number(),
+            endMinute: z.number(),
+            location: z.string(),
+          })
+        )
+        .nonempty(),
     });
 
-    const body = schema.parse(req.body);
-
     try {
+      const body = schema.parse(req.body);
+
+      // Check meeting time validity
+      for (const meeting of body.meetings) {
+        if (!new TimeRange({ ...meeting }).isValid) {
+          res.sendStatus(400);
+          return;
+        }
+      }
+
       const newCourseSection = await client.courseSection.create({
         data: {
           courseId: req.params.courseId,

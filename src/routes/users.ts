@@ -14,12 +14,13 @@ router.post("/", async (req, res, next) => {
     role: z.nativeEnum(Role),
   });
 
-  const body = schema.parse(req.body);
-
   try {
-    // Create a mock user in the database
-    await client.user.create({ data: { isMock: true, ...body } });
-    res.sendStatus(201);
+    const body = schema.parse(req.body);
+    const newUser = await client.user.create({
+      data: { isMock: true, ...body },
+    });
+
+    res.status(201).send(newUser);
   } catch (err) {
     next(err);
   }

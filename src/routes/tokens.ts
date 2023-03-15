@@ -6,14 +6,12 @@ import { sign } from "../utilities/tokens";
 const router = Router();
 
 router.post("/", async (req, res, next) => {
-  // Validate the request body
   const schema = z.object({
     email: z.string().email(),
   });
-  const body = schema.parse(req.body);
 
   try {
-    // Find a user from the email provided by the client
+    const body = schema.parse(req.body);
     const user = await client.user.findUniqueOrThrow({
       where: { email: body.email },
     });
@@ -24,7 +22,6 @@ router.post("/", async (req, res, next) => {
       return;
     }
 
-    // Finally, send a signed token
     res.status(201).send(sign({ userId: user.id }));
   } catch (err) {
     next(err);
