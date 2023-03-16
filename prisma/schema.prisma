@@ -52,14 +52,15 @@ enum Term {
 }
 
 model User {
-  id            String          @id @default(auto()) @map("_id") @db.ObjectId
-  isMock        Boolean
-  role          Role
-  email         String          @unique
-  firstName     String
-  lastName      String
-  urseSections  CourseSection[]
-  Registrations Registration[]
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  isMock         Boolean
+  role           Role
+  email          String          @unique
+  firstName      String
+  lastName       String
+  registrations  Registration[]
+  instructing    CourseSection[] @relation(fields: [instructingIds], references: [id])
+  instructingIds String[]        @ignore @db.ObjectId
 }
 
 model Registration {
@@ -67,7 +68,7 @@ model Registration {
   user            User          @relation(fields: [userId], references: [id])
   userId          String        @db.ObjectId
   courseSection   CourseSection @relation(fields: [courseSectionId], references: [id])
-  courseSectionId String        @db.ObjectId
+  courseSectionId String        @ignore @db.ObjectId
 }
 
 model Course {
@@ -77,22 +78,22 @@ model Course {
   department     Department
   code           Int
   description    String
-  CourseSections CourseSection[]
+  courseSections CourseSection[]
 }
 
 type Meeting {
   daysOfWeek DayOfWeek[]
-  startTime  DateTime
-  endTime    DateTime
+  startTime  String
+  endTime    String
   location   String
 }
 
 model CourseSection {
   id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  Course        Course         @relation(fields: [courseId], references: [id])
+  course        Course         @relation(fields: [courseId], references: [id])
   courseId      String         @db.ObjectId
   meetings      Meeting[]
-  instructor    User           @relation(fields: [instructorId], references: [id])
-  instructorId  String         @db.ObjectId
-  Registrations Registration[]
+  instructors   User[]         @relation(fields: [instructorIds], references: [id])
+  instructorIds String[]       @db.ObjectId
+  registrations Registration[]
 }
