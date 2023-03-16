@@ -41,7 +41,7 @@ router.get(
     try {
       const course = await client.course.findUniqueOrThrow({
         where: { id: req.params.courseId },
-        include: { courseSections: true },
+        include: { courseSections: { include: { instructors: true } } },
       });
 
       res.status(200).send(course);
@@ -77,6 +77,30 @@ router.put(
   }
 );
 
+router.delete(
+  "/:courseId",
+  authorize(["ADMINISTRATOR"]),
+  async (req, res, next) => {
+    try {
+      const deleteCourseSections = client.courseSection.deleteMany({
+        where: { courseId: req.params.courseId },
+      });
+      const deleteCourse = client.course.delete({
+        where: { id: req.params.courseId },
+      });
+
+      const transaction = await client.$transaction([
+        deleteCourseSections,
+        deleteCourse,
+      ]);
+
+      res.send(transaction);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 router.post(
   "/:courseId/sections",
   authorize(["ADMINISTRATOR"]),
@@ -98,7 +122,7 @@ router.post(
     try {
       const body = schema.parse(req.body);
 
-      // Check meeting time validity
+      // Check that end time is after start time
       for (const meeting of body.meetings) {
         if (!new TimeRange({ ...meeting }).isValid) {
           res.sendStatus(400);
@@ -117,14 +141,6 @@ router.post(
     } catch (err) {
       next(err);
     }
-  }
-);
-
-router.get(
-  "/:courseId/sections/:sectionId",
-  authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
-  (req, res, next) => {
-    // TODO: Retrieve course section information
   }
 );
 
