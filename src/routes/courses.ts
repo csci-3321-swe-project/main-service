@@ -87,10 +87,8 @@ router.post(
         .array(
           z.object({
             daysOfWeek: z.array(z.nativeEnum(DayOfWeek)).nonempty(),
-            startHour: z.number(),
-            startMinute: z.number(),
-            endHour: z.number(),
-            endMinute: z.number(),
+            startTime: z.string(),
+            endTime: z.string(),
             location: z.string(),
           })
         )

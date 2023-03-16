@@ -5,8 +5,24 @@ import client from "../utilities/client";
 
 const router = Router();
 
+router.get("/", async (req, res, next) => {
+  const schema = z.object({
+    email: z.string().email(),
+  });
+
+  try {
+    const query = schema.parse(req.query);
+    const users = await client.user.findMany({
+      where: { email: query.email },
+    });
+
+    res.send(users);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.post("/", async (req, res, next) => {
-  // Validate the request body
   const schema = z.object({
     email: z.string().email(),
     firstName: z.string(),

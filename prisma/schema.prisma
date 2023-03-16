@@ -52,15 +52,15 @@ enum Term {
 }
 
 model User {
-  id               String          @id @default(auto()) @map("_id") @db.ObjectId
-  isMock           Boolean
-  role             Role
-  email            String          @unique
-  firstName        String
-  lastName         String
-  registrations    Registration[]
-  instructorFor    CourseSection[] @relation(fields: [instructorForIds], references: [id])
-  instructorForIds String[]        @db.ObjectId
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  isMock         Boolean
+  role           Role
+  email          String          @unique
+  firstName      String
+  lastName       String
+  registrations  Registration[]
+  instructing    CourseSection[] @relation(fields: [instructingIds], references: [id])
+  instructingIds String[]        @ignore @db.ObjectId
 }
 
 model Registration {
@@ -68,7 +68,7 @@ model Registration {
   user            User          @relation(fields: [userId], references: [id])
   userId          String        @db.ObjectId
   courseSection   CourseSection @relation(fields: [courseSectionId], references: [id])
-  courseSectionId String        @db.ObjectId
+  courseSectionId String        @ignore @db.ObjectId
 }
 
 model Course {
@@ -82,12 +82,10 @@ model Course {
 }
 
 type Meeting {
-  daysOfWeek  DayOfWeek[]
-  startHour   Int
-  startMinute Int
-  endHour     Int
-  endMinute   Int
-  location    String
+  daysOfWeek DayOfWeek[]
+  startTime  String
+  endTime    String
+  location   String
 }
 
 model CourseSection {
