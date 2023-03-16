@@ -6,6 +6,9 @@ import { ErrorRequestHandler } from "express";
 import { ZodError } from "zod";
 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  // Log error for visibility
+  console.error(err);
+
   // Handle input validation errors
   if (err instanceof ZodError) {
     res.status(400).send(err.issues);
