@@ -69,6 +69,8 @@ model Registration {
   userId          String        @db.ObjectId
   courseSection   CourseSection @relation(fields: [courseSectionId], references: [id])
   courseSectionId String        @db.ObjectId
+
+  @@unique([userId, courseSectionId])
 }
 
 model Course {

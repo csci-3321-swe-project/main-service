@@ -228,18 +228,80 @@ router.put(
 );
 
 router.get(
-  "/:courseId/sections/:sectionId/roster",
-  authorize(["ADMINISTRATOR", "PROFESSOR"]),
-  (req, res, next) => {
-    // TODO: Retrieve the roster for a course section
+  "/:courseId/sections/:sectionId/registrations",
+  authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
+  async (req, res, next) => {
+    try {
+      const courseSectionId = req.params.sectionId;
+
+      const registrations = await client.registration.findMany({
+        where: { courseSectionId },
+        include: { user: true },
+      });
+
+      res.send(registrations);
+    } catch (err) {
+      next(err);
+    }
   }
 );
 
 router.post(
   "/:courseId/sections/:sectionId/registrations",
-  authorize(["STUDENT"]),
-  (req, res, next) => {
-    // TODO: Register current active user for course
+  authorize(["STUDENT", "PROFESSOR", "ADMINISTRATOR"]),
+  async (req, res, next) => {
+    try {
+      const courseSectionId = req.params.sectionId;
+      const userId = res.locals.user.id;
+
+      const sameCourseDifferentSectionRegistrations =
+        await client.registration.findMany({
+          where: {
+            userId,
+            courseSection: {
+              course: { courseSections: { some: { id: courseSectionId } } },
+            },
+          },
+        });
+
+      if (sameCourseDifferentSectionRegistrations.length) {
+        res.sendStatus(400);
+        return;
+      }
+
+      const newRegistration = await client.registration.create({
+        data: {
+          courseSectionId,
+          userId,
+        },
+      });
+
+      res.status(201).send(newRegistration);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.delete(
+  "/:courseId/sections/:sectionId/registrations",
+  authorize(["STUDENT", "PROFESSOR", "ADMINISTRATOR"]),
+  async (req, res, next) => {
+    try {
+      const courseSectionId = req.params.sectionId;
+      const userId = res.locals.user.id;
+
+      const deletedRegistration = await client.registration.deleteMany({
+        where: {
+          courseSectionId,
+          userId,
+        },
+      });
+
+      res.status(201).send(deletedRegistration);
+    } catch (err) {
+      next(err);
+    }
   }
 );
 
