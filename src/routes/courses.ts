@@ -145,10 +145,19 @@ router.post(
 );
 
 router.get(
-  "/:courseId/sections/:sectionId/roster",
-  authorize(["ADMINISTRATOR", "PROFESSOR"]),
-  (req, res, next) => {
-    // TODO: Retrieve the roster for a course section
+  "/:courseId/sections/:sectionId",
+  authorize(["ADMINISTRATOR"]),
+  async (req, res, next) => {
+    try {
+      const courseSection = await client.courseSection.findUniqueOrThrow({
+        where: { id: req.params.sectionId },
+        include: { instructors: true, course: true },
+      });
+
+      res.send(courseSection);
+    } catch (err) {
+      next(err);
+    }
   }
 );
 
@@ -178,8 +187,51 @@ router.delete(
 router.put(
   "/:courseId/sections/:sectionId",
   authorize(["ADMINISTRATOR"]),
+  async (req, res, next) => {
+    const schema = z.object({
+      instructorIds: z.array(z.string()).nonempty(),
+      meetings: z
+        .array(
+          z.object({
+            daysOfWeek: z.array(z.nativeEnum(DayOfWeek)).nonempty(),
+            startTime: z.string(),
+            endTime: z.string(),
+            location: z.string(),
+          })
+        )
+        .nonempty(),
+    });
+
+    try {
+      const body = schema.parse(req.body);
+
+      // Check that end time is after start time
+      for (const meeting of body.meetings) {
+        if (!new TimeRange({ ...meeting }).isValid) {
+          res.sendStatus(400);
+          return;
+        }
+      }
+
+      const updatedCourseSection = await client.courseSection.update({
+        where: { id: req.params.sectionId },
+        data: {
+          ...body,
+        },
+      });
+
+      res.status(201).send(updatedCourseSection);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.get(
+  "/:courseId/sections/:sectionId/roster",
+  authorize(["ADMINISTRATOR", "PROFESSOR"]),
   (req, res, next) => {
-    // TODO: Update section information
+    // TODO: Retrieve the roster for a course section
   }
 );
 
