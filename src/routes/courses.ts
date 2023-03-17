@@ -155,8 +155,23 @@ router.get(
 router.delete(
   "/:courseId/sections/:sectionId",
   authorize(["ADMINISTRATOR"]),
-  (req, res, next) => {
-    // TODO: Delete course section
+  async (req, res, next) => {
+    try {
+      const deleteRegistrations = client.registration.deleteMany({
+        where: { courseSectionId: req.params.sectionId },
+      });
+      const deleteCourseSection = client.courseSection.delete({
+        where: { id: req.params.sectionId },
+      });
+      const transaction = await client.$transaction([
+        deleteRegistrations,
+        deleteCourseSection,
+      ]);
+
+      res.send(transaction);
+    } catch (err) {
+      next(err);
+    }
   }
 );
 
