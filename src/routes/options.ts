@@ -5,7 +5,7 @@ import options from "../utilities/options";
 const router = Router();
 
 router.get("/", (_, res) => {
-  res.send({
+  res.status(200).send({
     roles: options(Role),
     departments: options(Department),
     daysOfWeek: options(DayOfWeek),

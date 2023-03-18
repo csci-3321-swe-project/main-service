@@ -94,7 +94,7 @@ router.delete(
         deleteCourse,
       ]);
 
-      res.send(transaction);
+      res.status(200).send(transaction);
     } catch (err) {
       next(err);
     }
@@ -154,7 +154,7 @@ router.get(
         include: { instructors: true, course: true },
       });
 
-      res.send(courseSection);
+      res.status(200).send(courseSection);
     } catch (err) {
       next(err);
     }
@@ -177,7 +177,7 @@ router.delete(
         deleteCourseSection,
       ]);
 
-      res.send(transaction);
+      res.status(200).send(transaction);
     } catch (err) {
       next(err);
     }
@@ -239,7 +239,7 @@ router.get(
         include: { user: true },
       });
 
-      res.send(registrations);
+      res.status(200).send(registrations);
     } catch (err) {
       next(err);
     }
