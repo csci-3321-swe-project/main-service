@@ -41,7 +41,7 @@ router.get(
     try {
       const course = await client.course.findUniqueOrThrow({
         where: { id: req.params.courseId },
-        include: { courseSections: true },
+        include: { courseSections: { include: { instructors: true } } },
       });
 
       res.status(200).send(course);
@@ -77,6 +77,30 @@ router.put(
   }
 );
 
+router.delete(
+  "/:courseId",
+  authorize(["ADMINISTRATOR"]),
+  async (req, res, next) => {
+    try {
+      const deleteCourseSections = client.courseSection.deleteMany({
+        where: { courseId: req.params.courseId },
+      });
+      const deleteCourse = client.course.delete({
+        where: { id: req.params.courseId },
+      });
+
+      const transaction = await client.$transaction([
+        deleteCourseSections,
+        deleteCourse,
+      ]);
+
+      res.send(transaction);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 router.post(
   "/:courseId/sections",
   authorize(["ADMINISTRATOR"]),
@@ -98,7 +122,7 @@ router.post(
     try {
       const body = schema.parse(req.body);
 
-      // Check meeting time validity
+      // Check that end time is after start time
       for (const meeting of body.meetings) {
         if (!new TimeRange({ ...meeting }).isValid) {
           res.sendStatus(400);
@@ -122,41 +146,162 @@ router.post(
 
 router.get(
   "/:courseId/sections/:sectionId",
-  authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
-  (req, res, next) => {
-    // TODO: Retrieve course section information
-  }
-);
+  authorize(["ADMINISTRATOR"]),
+  async (req, res, next) => {
+    try {
+      const courseSection = await client.courseSection.findUniqueOrThrow({
+        where: { id: req.params.sectionId },
+        include: { instructors: true, course: true },
+      });
 
-router.get(
-  "/:courseId/sections/:sectionId/roster",
-  authorize(["ADMINISTRATOR", "PROFESSOR"]),
-  (req, res, next) => {
-    // TODO: Retrieve the roster for a course section
+      res.send(courseSection);
+    } catch (err) {
+      next(err);
+    }
   }
 );
 
 router.delete(
   "/:courseId/sections/:sectionId",
   authorize(["ADMINISTRATOR"]),
-  (req, res, next) => {
-    // TODO: Delete course section
+  async (req, res, next) => {
+    try {
+      const deleteRegistrations = client.registration.deleteMany({
+        where: { courseSectionId: req.params.sectionId },
+      });
+      const deleteCourseSection = client.courseSection.delete({
+        where: { id: req.params.sectionId },
+      });
+      const transaction = await client.$transaction([
+        deleteRegistrations,
+        deleteCourseSection,
+      ]);
+
+      res.send(transaction);
+    } catch (err) {
+      next(err);
+    }
   }
 );
 
 router.put(
   "/:courseId/sections/:sectionId",
   authorize(["ADMINISTRATOR"]),
-  (req, res, next) => {
-    // TODO: Update section information
+  async (req, res, next) => {
+    const schema = z.object({
+      instructorIds: z.array(z.string()).nonempty(),
+      meetings: z
+        .array(
+          z.object({
+            daysOfWeek: z.array(z.nativeEnum(DayOfWeek)).nonempty(),
+            startTime: z.string(),
+            endTime: z.string(),
+            location: z.string(),
+          })
+        )
+        .nonempty(),
+    });
+
+    try {
+      const body = schema.parse(req.body);
+
+      // Check that end time is after start time
+      for (const meeting of body.meetings) {
+        if (!new TimeRange({ ...meeting }).isValid) {
+          res.sendStatus(400);
+          return;
+        }
+      }
+
+      const updatedCourseSection = await client.courseSection.update({
+        where: { id: req.params.sectionId },
+        data: {
+          ...body,
+        },
+      });
+
+      res.status(201).send(updatedCourseSection);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.get(
+  "/:courseId/sections/:sectionId/registrations",
+  authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
+  async (req, res, next) => {
+    try {
+      const courseSectionId = req.params.sectionId;
+
+      const registrations = await client.registration.findMany({
+        where: { courseSectionId },
+        include: { user: true },
+      });
+
+      res.send(registrations);
+    } catch (err) {
+      next(err);
+    }
   }
 );
 
 router.post(
   "/:courseId/sections/:sectionId/registrations",
-  authorize(["STUDENT"]),
-  (req, res, next) => {
-    // TODO: Register current active user for course
+  authorize(["STUDENT", "PROFESSOR", "ADMINISTRATOR"]),
+  async (req, res, next) => {
+    try {
+      const courseSectionId = req.params.sectionId;
+      const userId = res.locals.user.id;
+
+      const sameCourseDifferentSectionRegistrations =
+        await client.registration.findMany({
+          where: {
+            userId,
+            courseSection: {
+              course: { courseSections: { some: { id: courseSectionId } } },
+            },
+          },
+        });
+
+      if (sameCourseDifferentSectionRegistrations.length) {
+        res.sendStatus(400);
+        return;
+      }
+
+      const newRegistration = await client.registration.create({
+        data: {
+          courseSectionId,
+          userId,
+        },
+      });
+
+      res.status(201).send(newRegistration);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.delete(
+  "/:courseId/sections/:sectionId/registrations",
+  authorize(["STUDENT", "PROFESSOR", "ADMINISTRATOR"]),
+  async (req, res, next) => {
+    try {
+      const courseSectionId = req.params.sectionId;
+      const userId = res.locals.user.id;
+
+      const deletedRegistration = await client.registration.deleteMany({
+        where: {
+          courseSectionId,
+          userId,
+        },
+      });
+
+      res.status(201).send(deletedRegistration);
+    } catch (err) {
+      next(err);
+    }
   }
 );
 

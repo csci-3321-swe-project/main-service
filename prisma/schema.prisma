@@ -59,8 +59,8 @@ model User {
   firstName      String
   lastName       String
   registrations  Registration[]
-  instructing    CourseSection[] @relation(fields: [instructingIds], references: [id])
-  instructingIds String[]        @ignore @db.ObjectId
+  instructing    CourseSection[] @relation(name: "instructors", fields: [instructingIds], references: [id])
+  instructingIds String[]        @db.ObjectId
 }
 
 model Registration {
@@ -68,7 +68,9 @@ model Registration {
   user            User          @relation(fields: [userId], references: [id])
   userId          String        @db.ObjectId
   courseSection   CourseSection @relation(fields: [courseSectionId], references: [id])
-  courseSectionId String        @ignore @db.ObjectId
+  courseSectionId String        @db.ObjectId
+
+  @@unique([userId, courseSectionId])
 }
 
 model Course {
@@ -93,7 +95,7 @@ model CourseSection {
   course        Course         @relation(fields: [courseId], references: [id])
   courseId      String         @db.ObjectId
   meetings      Meeting[]
-  instructors   User[]         @relation(fields: [instructorIds], references: [id])
+  instructors   User[]         @relation(name: "instructors", fields: [instructorIds], references: [id])
   instructorIds String[]       @db.ObjectId
   registrations Registration[]
 }

@@ -15,13 +15,20 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     return;
   }
 
-  // Handle database errors
-  if (
-    err instanceof PrismaClientKnownRequestError ||
-    err instanceof PrismaClientValidationError
-  ) {
-    res.status(400).send("Invalid request.");
-    return;
+  // Request errors
+  if (err instanceof PrismaClientKnownRequestError) {
+    switch (err.code) {
+      case "P2025":
+        res.sendStatus(404);
+        break;
+      default:
+        res.sendStatus(400);
+    }
+  }
+
+  // Validation errors
+  if (err instanceof PrismaClientValidationError) {
+    res.sendStatus(400);
   }
 
   // Otherwise, pass to default error handler
