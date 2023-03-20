@@ -82,6 +82,9 @@ router.delete(
   authorize(["ADMINISTRATOR"]),
   async (req, res, next) => {
     try {
+      const deleteRegistrations = client.registration.deleteMany({
+        where: { courseSection: { courseId: req.params.courseId } },
+      });
       const deleteCourseSections = client.courseSection.deleteMany({
         where: { courseId: req.params.courseId },
       });
@@ -90,6 +93,7 @@ router.delete(
       });
 
       const transaction = await client.$transaction([
+        deleteRegistrations,
         deleteCourseSections,
         deleteCourse,
       ]);
@@ -274,6 +278,7 @@ router.post(
           courseSectionId,
           userId,
         },
+        include: { user: true },
       });
 
       res.status(201).send(newRegistration);
