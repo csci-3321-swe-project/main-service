@@ -27,10 +27,20 @@ router.get(
     const searchTermsDbQuery = [] as any[]
     searchTerms.forEach(term => {
       searchTermsDbQuery.push({
-        name: {
-          contains: term,
-          mode: 'insensitive'
-        }
+        OR: [
+          {
+            name: {
+              contains: term,
+              mode: 'insensitive'
+            }
+          },
+          {
+            description: {
+              contains: term,
+              mode: 'insensitive'
+            }
+          }
+        ]
         // could add check for if the description contains the terms
       })
     })
