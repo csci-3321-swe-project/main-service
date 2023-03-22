@@ -23,7 +23,11 @@ router.get(
 
     const query = schema.parse(req.query)
     const searchTerms = query.search ? query.search.split(' ') : []
-    // creating the object that will be used to search the database for search terms
+    /*
+        This structure is a list of queries where each query ensures that one of the term in 
+        search terms are either in the name or description of a course. The elements of this list will
+        be combined in the final query to filter only courses that contain all of the search terms.
+    */
     const searchTermsDbQuery = [] as any[]
     searchTerms.forEach(term => {
       searchTermsDbQuery.push({
@@ -43,6 +47,10 @@ router.get(
         ]
       })
     })
+    /* 
+      modifying the query parameter so it can be used in the final query to apply simple filters.
+      May need to do something more complex when adding section-specific filters.
+    */ 
     delete query.search
 
     try {
