@@ -10,9 +10,46 @@ const router = Router();
 router.get(
   "/",
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
-  (req, res, next) => {
+  async (req, res, next) => {
     // TODO: Retrieve courses given search criterion
+    const schema = z.object({
+      search: z.string().optional(),
+      // various filters
+      term: z.string().optional(),
+      department: z.string().optional(),
+      // not sure how time filter will be formatted
+      // also not sure how section specific filters will work
+    })
+
+    const query = schema.parse(req.query)
+    const searchTerms = query.search ? query.search.split(' ') : []
+    // creating the object that will be used to search the database for search terms
+    const searchTermsDbQuery = [] as any[]
+    searchTerms.forEach(term => {
+      searchTermsDbQuery.push({
+        name: {
+          contains: term,
+          mode: 'insensitive'
+        }
+        // could add check for if the description contains the terms
+      })
+    })
+    delete query.search
+
+    try {
+      const courses = await client.course.findMany({
+        where: {
+          AND: searchTermsDbQuery.concat([query])
+        }
+      })
+      
+      res.status(200).json({ courses: courses })
+    } catch(err) {
+      next(err)
+    }
+
   }
+    
 );
 
 router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
@@ -125,7 +162,6 @@ router.post(
 
     try {
       const body = schema.parse(req.body);
-
       // Check that end time is after start time
       for (const meeting of body.meetings) {
         if (!new TimeRange({ ...meeting }).isValid) {
