@@ -41,7 +41,6 @@ router.get(
             }
           }
         ]
-        // could add check for if the description contains the terms
       })
     })
     delete query.search
