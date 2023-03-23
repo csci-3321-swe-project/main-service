@@ -5,6 +5,7 @@ import authorize from "../middleware/authorize";
 import client from "../utilities/client";
 import { TimeRange } from "../utilities/time-range";
 
+
 const router = Router();
 
 router.get(
@@ -68,6 +69,7 @@ router.get(
     
 );
 
+//Create Course Post
 router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   const schema = z.object({
     name: z.string(),
@@ -77,9 +79,25 @@ router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
     description: z.string(),
   });
 
+  var thisDate = new Date();
+  var stringDate = thisDate.toString();
+  console.log(stringDate);
+
   try {
+    const user = client.user.findUniqueOrThrow(
+      {
+        where {
+          email: "lmartin9@trinity.edu"
+        }
+      }
+    )
     const body = schema.parse(req.body);
-    const newCourse = await client.course.create({ data: body });
+    const newCourse = await client.course.create({ data: {
+      createdOn: stringDate,
+      createdBy: //TODO User parsed from Token Goes here,
+      ...body 
+    }
+    });
 
     res.status(201).send(newCourse);
   } catch (err) {
@@ -157,7 +175,7 @@ router.delete(
     }
   }
 );
-
+//Create Course Section Post
 router.post(
   "/:courseId/sections",
   authorize(["ADMINISTRATOR"]),
@@ -189,6 +207,7 @@ router.post(
       const newCourseSection = await client.courseSection.create({
         data: {
           courseId: req.params.courseId,
+          //TODO: Create Course Section Audit
           ...body,
         },
       });
