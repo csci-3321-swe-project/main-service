@@ -10,9 +10,62 @@ const router = Router();
 router.get(
   "/",
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
-  (req, res, next) => {
+  async (req, res, next) => {
     // TODO: Retrieve courses given search criterion
+    const schema = z.object({
+      search: z.string().optional(),
+      // various filters
+      term: z.string().optional(),
+      department: z.string().optional(),
+      // not sure how time filter will be formatted
+      // also not sure how section specific filters will work
+    })
+
+    const query = schema.parse(req.query)
+    const searchTerms = query.search ? query.search.split(' ') : []
+    /*
+        This structure is a list of queries where each query ensures that one of the search terms 
+        are either in the name or description of a course. The elements of this list will be combined
+        in the final query to filter only courses that contain all of the search terms.
+    */
+    const searchTermsDbQuery = searchTerms.map(term => {
+      return <any> {
+        OR: [
+          {
+            name: {
+              contains: term,
+              mode: 'insensitive'
+            }
+          },
+          {
+            description: {
+              contains: term,
+              mode: 'insensitive'
+            }
+          }
+        ]
+      }
+    })
+    /* 
+      modifying the query parameter so it can be used in the final query to apply simple filters.
+      May need to do something more complex when adding section-specific filters.
+    */ 
+    delete query.search
+
+    try {
+      const courses = await client.course.findMany({
+        where: {
+          AND: searchTermsDbQuery.concat([query])
+        }
+      })
+      
+      res.status(200).json({ courses: courses })
+    } catch(err) {
+      next(err)
+    }
+
   }
+    
 );
 
 router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
@@ -125,7 +178,6 @@ router.post(
 
     try {
       const body = schema.parse(req.body);
-
       // Check that end time is after start time
       for (const meeting of body.meetings) {
         if (!new TimeRange({ ...meeting }).isValid) {
