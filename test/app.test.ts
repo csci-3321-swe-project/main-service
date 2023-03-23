@@ -1,9 +1,9 @@
-import { describe } from 'node:test'
-import app from '../index'
+import {describe, expect, test} from '@jest/globals'
+import app from '../src/index'
 
 describe("Route Tests", () => {
     describe("Account GET", async () => {
-        const request = await request(app).get('/account')
+        
     })
     describe("Courses GET", () => {
 
