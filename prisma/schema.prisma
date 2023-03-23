@@ -61,6 +61,8 @@ model User {
   registrations  Registration[]
   instructing    CourseSection[] @relation(name: "instructors", fields: [instructingIds], references: [id])
   instructingIds String[]        @db.ObjectId
+  coursesCreated Course[]        @relation(name: "createdBy")
+  coursesLastUpdated Course[]        @relation(name: "lastUpdatedBy")
 }
 
 model Registration {
@@ -81,6 +83,14 @@ model Course {
   code           Int
   description    String
   courseSections CourseSection[]
+  
+  createdBy      User            @relation(name: "createdBy", fields: [createdById], references: [id])
+  createdById    String          @db.ObjectId
+  createdOn      String
+  lastUpdatedBy  User            @relation(name: "lastUpdatedBy", fields: [lastUpdatedById], references: [id])
+  lastUpdatedById    String         @db.ObjectId
+  lastUpdatedOn      String
+  
 }
 
 type Meeting {

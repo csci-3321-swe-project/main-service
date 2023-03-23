@@ -22,11 +22,15 @@ const authorize = (roles: Role[]) => {
 
     // Verify token
     const payload = parse(token);
+    res.set('userId',payload.userId)
 
     // Attach user object to request data
     const user = await client.user.findUnique({
       where: { id: payload.userId },
     });
+
+    
+
 
     if (!user) {
       res.sendStatus(401);

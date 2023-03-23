@@ -69,7 +69,7 @@ router.get(
     
 );
 
-//Create Course Post
+// Create Course
 router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   const schema = z.object({
     name: z.string(),
@@ -78,23 +78,14 @@ router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
     code: z.number(),
     description: z.string(),
   });
-
-  var thisDate = new Date();
-  var stringDate = thisDate.toString();
-  console.log(stringDate);
-
+  const currentTime = (new Date()).toString()
   try {
-    const user = client.user.findUniqueOrThrow(
-      {
-        where {
-          email: "lmartin9@trinity.edu"
-        }
-      }
-    )
     const body = schema.parse(req.body);
     const newCourse = await client.course.create({ data: {
-      createdOn: stringDate,
-      createdBy: //TODO User parsed from Token Goes here,
+      createdById: <string> res.get('userId'),
+      createdOn: currentTime,
+      lastUpdatedById: <string> res.get('userId'),
+      lastUpdatedOn: currentTime,
       ...body 
     }
     });
@@ -105,6 +96,7 @@ router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   }
 });
 
+// Get Course
 router.get(
   "/:courseId",
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
@@ -122,6 +114,7 @@ router.get(
   }
 );
 
+// Update Course
 router.put(
   "/:courseId",
   authorize(["ADMINISTRATOR"]),
@@ -148,6 +141,7 @@ router.put(
   }
 );
 
+// Delete Course
 router.delete(
   "/:courseId",
   authorize(["ADMINISTRATOR"]),
@@ -175,7 +169,8 @@ router.delete(
     }
   }
 );
-//Create Course Section Post
+
+// Create Course Section
 router.post(
   "/:courseId/sections",
   authorize(["ADMINISTRATOR"]),
@@ -219,6 +214,7 @@ router.post(
   }
 );
 
+// Get Course Section
 router.get(
   "/:courseId/sections/:sectionId",
   authorize(["ADMINISTRATOR"]),
@@ -236,6 +232,7 @@ router.get(
   }
 );
 
+// Delete Course Section
 router.delete(
   "/:courseId/sections/:sectionId",
   authorize(["ADMINISTRATOR"]),
@@ -259,6 +256,7 @@ router.delete(
   }
 );
 
+// Update Course Section
 router.put(
   "/:courseId/sections/:sectionId",
   authorize(["ADMINISTRATOR"]),
@@ -302,6 +300,7 @@ router.put(
   }
 );
 
+// Get Registrations
 router.get(
   "/:courseId/sections/:sectionId/registrations",
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
@@ -321,6 +320,7 @@ router.get(
   }
 );
 
+// Create Registration
 router.post(
   "/:courseId/sections/:sectionId/registrations",
   authorize(["STUDENT", "PROFESSOR", "ADMINISTRATOR"]),
@@ -359,6 +359,7 @@ router.post(
   }
 );
 
+// Delete Registrations
 router.delete(
   "/:courseId/sections/:sectionId/registrations",
   authorize(["STUDENT", "PROFESSOR", "ADMINISTRATOR"]),
