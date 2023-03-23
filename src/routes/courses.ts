@@ -1,4 +1,4 @@
-import { DayOfWeek, Department, Term } from "@prisma/client";
+import { DaysOfWeek, Department, Term } from "@prisma/client";
 import { Router } from "express";
 import { z } from "zod";
 import authorize from "../middleware/authorize";
@@ -41,7 +41,7 @@ router.get(
     try {
       const course = await client.course.findUniqueOrThrow({
         where: { id: req.params.courseId },
-        include: { courseSections: { include: { instructors: true } } },
+        include: { CourseSections: { include: { instructor: true } } },
       });
 
       res.status(200).send(course);
@@ -114,7 +114,7 @@ router.post(
       meetings: z
         .array(
           z.object({
-            daysOfWeek: z.array(z.nativeEnum(DayOfWeek)).nonempty(),
+            daysOfWeek: z.array(z.nativeEnum(DaysOfWeek)).nonempty(),
             startTime: z.string(),
             endTime: z.string(),
             location: z.string(),
@@ -137,7 +137,7 @@ router.post(
       const newCourseSection = await client.courseSection.create({
         data: {
           courseId: req.params.courseId,
-          ...body,
+          ...body
         },
       });
 
@@ -155,7 +155,7 @@ router.get(
     try {
       const courseSection = await client.courseSection.findUniqueOrThrow({
         where: { id: req.params.sectionId },
-        include: { instructors: true, course: true },
+        include: { instructor: true, Course: true },
       });
 
       res.status(200).send(courseSection);
@@ -197,7 +197,7 @@ router.put(
       meetings: z
         .array(
           z.object({
-            daysOfWeek: z.array(z.nativeEnum(DayOfWeek)).nonempty(),
+            daysOfWeek: z.array(z.nativeEnum(DaysOfWeek)).nonempty(),
             startTime: z.string(),
             endTime: z.string(),
             location: z.string(),
@@ -263,7 +263,7 @@ router.post(
           where: {
             userId,
             courseSection: {
-              course: { courseSections: { some: { id: courseSectionId } } },
+              Course: { CourseSections: { some: { id: courseSectionId } } },
             },
           },
         });
