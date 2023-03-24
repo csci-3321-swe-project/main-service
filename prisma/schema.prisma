@@ -88,7 +88,7 @@ model Course {
   createdBy      User            @relation(name: "createdBy", fields: [createdById], references: [id])
   createdById    String          @db.ObjectId
   createdOn      String
-  updatedBys     User[]          @relation(name: "updatedBy", fields: [updatedByIds], references: [id])
+  updatedByUsers User[]          @relation(name: "updatedBy", fields: [updatedByIds], references: [id])
   updatedByIds   String[]        @db.ObjectId
   updatedOnTimes String[]
   
