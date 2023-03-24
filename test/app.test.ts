@@ -3,7 +3,8 @@ import app from '../src/index'
 
 describe("Route Tests", () => {
     describe("Account GET", async () => {
-        
+        // const request = app.get("/account");
+        // expect(request).toBe()
     })
     describe("Courses GET", () => {
 
