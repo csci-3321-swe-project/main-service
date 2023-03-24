@@ -62,7 +62,8 @@ model User {
   instructing    CourseSection[] @relation(name: "instructors", fields: [instructingIds], references: [id])
   instructingIds String[]        @db.ObjectId
   coursesCreated Course[]        @relation(name: "createdBy")
-  coursesLastUpdated Course[]        @relation(name: "lastUpdatedBy")
+  coursesUpdated Course[]        @relation(name: "updatedBy", fields: [updatedIds], references: [id])
+  updatedIds     String[]        @db.ObjectId
 }
 
 model Registration {
@@ -87,9 +88,9 @@ model Course {
   createdBy      User            @relation(name: "createdBy", fields: [createdById], references: [id])
   createdById    String          @db.ObjectId
   createdOn      String
-  lastUpdatedBy  User            @relation(name: "lastUpdatedBy", fields: [lastUpdatedById], references: [id])
-  lastUpdatedById    String         @db.ObjectId
-  lastUpdatedOn      String
+  updatedBys     User[]          @relation(name: "updatedBy", fields: [updatedByIds], references: [id])
+  updatedByIds   String[]        @db.ObjectId
+  updatedOnTimes String[]
   
 }
 

@@ -82,10 +82,10 @@ router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   try {
     const body = schema.parse(req.body);
     const newCourse = await client.course.create({ data: {
-      createdById: <string> res.locals.userId,
+      createdById: res.locals.user.id,
       createdOn: currentTime,
-      lastUpdatedById: <string> res.locals.userId,
-      lastUpdatedOn: currentTime,
+      updatedByIds: [res.locals.user.id],
+      updatedOnTimes: [currentTime],
       ...body 
     }
     });
@@ -127,11 +127,20 @@ router.put(
       description: z.optional(z.string()),
     });
 
+    const currentTime = (new Date()).toString()
     try {
       const body = schema.parse(req.body);
       const updatedCourse = await client.course.update({
         where: { id: req.params.courseId },
-        data: body,
+        data: {
+          updatedByIds: {
+            push: res.locals.user.id
+          },
+          updatedOnTimes: {
+            push: currentTime
+          },
+          ...body
+        }
       });
 
       res.status(200).send(updatedCourse);
