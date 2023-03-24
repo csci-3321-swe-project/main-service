@@ -82,9 +82,9 @@ router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   try {
     const body = schema.parse(req.body);
     const newCourse = await client.course.create({ data: {
-      createdById: <string> res.get('userId'),
+      createdById: <string> res.locals.userId,
       createdOn: currentTime,
-      lastUpdatedById: <string> res.get('userId'),
+      lastUpdatedById: <string> res.locals.userId,
       lastUpdatedOn: currentTime,
       ...body 
     }
