@@ -17,6 +17,7 @@ router.get(
       // various filters
       term: z.string().optional(),
       department: z.string().optional(),
+      instructors: z.string().optional(),
       // not sure how time filter will be formatted
       // also not sure how section specific filters will work
     })
@@ -46,16 +47,35 @@ router.get(
         ]
       }
     })
+    
+    /*
+      This structure ensures that there a course fulfills all of the course-specific filters, and
+      at least one of the sections fulfills all section-specific filters. This will be added to 
+      the final query. 
+    */
+    const filterDbQuery = {
+      courseSections: {
+        some: {
+          instructorIds: {
+            hasEvery: query.instructors?.split(' ') || []
+          }
+          // TODO: meeting times
+        }
+      },
+      term: req.query.term,
+      department: req.query.department
+      // TODO: upper / lower level
+    }
+
     /* 
       modifying the query parameter so it can be used in the final query to apply simple filters.
       May need to do something more complex when adding section-specific filters.
     */ 
-    delete query.search
 
     try {
       const courses = await client.course.findMany({
         where: {
-          AND: searchTermsDbQuery.concat([query])
+          AND: searchTermsDbQuery.concat([filterDbQuery])
         }
       })
       
