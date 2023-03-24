@@ -7,8 +7,8 @@ run-name: ${{github.actor}} pushed to testing
 on:
   push:
     branches: [ "testing" ]
-  # pull_request:
-  #   branches: [ "testing" ]
+    pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
