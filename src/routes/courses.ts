@@ -22,10 +22,14 @@ router.get(
     const schema = z.object({
       search: z.string().optional(),
       term: z.string().optional(),
-      department: z.string().optional(),
+      department: z.nativeEnum(Department).optional(),
       instructors: z.string().optional(),
+      /* 
+        Note: days should actually be an array of nativeEnum(DayOfWeek). However, because it is 
+        an array, the query representation is a string with the values separated by spaces. This 
+        means no validation is done to ensure that the days are proper values of DayOfWeek. 
+      */
       days: z.string().optional(),
-      // not sure how time filter will be formatted
     })
 
     const query = schema.parse(req.query)
@@ -34,7 +38,7 @@ router.get(
         This structure is a list of queries where each query ensures that one of the search terms 
         are either in the name or description of a course. The elements of this list will be combined
         in the final query to filter only courses that contain all of the search terms. Note: this
-        implementation requires that a course include and correctly spell all search terms.
+        implementation requires that a course includes ALL search terms exactly as they are spelled.
     */
     const searchTermsDbQuery = searchTerms.map(term => {
       return <any> {
@@ -60,6 +64,7 @@ router.get(
       !query.days.split(' ').includes(day) :
       false
     )
+
     /*
       This structure ensures that a course fulfills all of the course-specific filters and
       at least one of the sections fulfills all section-specific filters. This will be added to 
@@ -76,7 +81,8 @@ router.get(
       } : {},
       /*
         A course should have at least one section where meeting times are only on the filtered days.
-        Note: With this implementation, a course with no sections will satisfy this requirement.
+        Note: With this implementation, a course with no sections will satisfy this requirement, which
+        is inconsistent with the other section-specific filters.
       */
       NOT: {
         courseSections: {
@@ -92,6 +98,7 @@ router.get(
         }
       },
       // TODO: meeting times
+      // course specific-filters
       term: req.query.term,
       department: req.query.department
       // TODO: upper / lower level
