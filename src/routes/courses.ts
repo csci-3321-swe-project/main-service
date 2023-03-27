@@ -27,7 +27,8 @@ router.get(
       /* 
         Note: days should actually be an array of nativeEnum(DayOfWeek). However, because it is 
         an array, the query representation is a string with the values separated by spaces. This 
-        means no validation is done to ensure that the days are proper values of DayOfWeek. 
+        means no validation is done to ensure that the days are proper values of DayOfWeek. Invalid
+        values will instead be ignored.
       */
       days: z.string().optional(),
     })
@@ -71,22 +72,13 @@ router.get(
       the final query.
     */
     const filterDbQuery = {
-      // A course should have at least one section that has at least one of the filtered instructors
-      courseSections: query.instructors ? {
+      // section-specific filters
+      courseSections:  {
         some: {
-          instructorIds: {
+          instructorIds: query.instructors ? {
             hasSome: query.instructors.split(' ')
-          },
-        }, 
-      } : {},
-      /*
-        A course should have at least one section where meeting times are only on the filtered days.
-        Note: With this implementation, a course with no sections will satisfy this requirement, which
-        is inconsistent with the other section-specific filters.
-      */
-      NOT: {
-        courseSections: {
-          every: {
+          } : { hasEvery: [] },
+          NOT: {
             meetings: {
               some: {
                 daysOfWeek: {
@@ -95,10 +87,10 @@ router.get(
               }
             }
           }
-        }
+        }, 
       },
       // TODO: meeting times
-      // course specific-filters
+      // course-specific filters
       term: req.query.term,
       department: req.query.department
       // TODO: upper / lower level
