@@ -1,5 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 import app from '../src/index'
+import {prismaMock} from './singleton'
 
 describe("Route Tests", () => {
     describe("Account GET", async () => {
@@ -52,7 +53,20 @@ describe("Route Tests", () => {
 
     })
     describe("Users POST", () => {
-
+        test('Should add a new user', async () => {
+            const user = {
+                id: "1234",
+                isMock: true,
+                role: JSON.parse("STUDENT"),
+                email: "test@test.edu",
+                firstName: "Test",
+                lastName: "McTesterson",
+                registrations: [],
+                instructing: [],
+                instructingIds: [],
+            }
+            // await expect(app.post("/users",user))
+        })
     })
 })
 
