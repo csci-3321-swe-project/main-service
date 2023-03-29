@@ -11,7 +11,6 @@ router.get(
   "/",
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
   async (req, res, next) => {
-    // TODO: Retrieve courses given search criterion
     /*
       URL formatting:
         - URL can contain 0 or more query parameters
@@ -20,25 +19,26 @@ router.get(
         - For query parameters with multiple values, each value is separated by either + or %20
     */
     const schema = z.object({
-      search: z.string().optional(),
+      search: z.string()
+                .transform(str => str.split(' '))
+                .optional(),
       term: z.string().optional(),
       department: z.nativeEnum(Department).optional(),
       instructors: z.string().optional(),
       days: z.string()
               .transform(str => str.split(' '))
               .pipe(z.array(z.nativeEnum(DayOfWeek)))
+              .optional()
     })
 
     const query = schema.parse(req.query)
-    const searchTerms = query.search ? query.search.split(' ') : []
-    console.log(query.days)
     /*
         This structure is a list of queries where each query ensures that one of the search terms 
         are either in the name or description of a course. The elements of this list will be combined
         in the final query to filter only courses that contain all of the search terms. Note: this
         implementation requires that a course includes ALL search terms exactly as they are spelled.
     */
-    const searchTermsDbQuery = searchTerms.map(term => {
+    const searchTermsDbQuery = query.search?.map(term => {
       return <any> {
         OR: [
           {
@@ -55,7 +55,7 @@ router.get(
           }
         ]
       }
-    })
+    }) || []
     
     const daysNotInFilter = Object.values(DayOfWeek).filter(day => 
       query.days ?
@@ -86,11 +86,10 @@ router.get(
           }
         }, 
       },
-      // TODO: meeting times
       // course-specific filters
       term: req.query.term,
       department: req.query.department
-      // TODO: upper / lower level
+      // TODO: meeting times and upper / lower level
     }
 
     try {
