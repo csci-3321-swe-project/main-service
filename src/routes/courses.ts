@@ -12,13 +12,25 @@ router.get(
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
   async (req, res, next) => {
     // TODO: Retrieve courses given search criterion
+    /*
+      URL formatting:
+        - URL can contain 0 or more query parameters
+        - Each query parameter is formatted as paramterName=value
+        - Query parameters are separated by &'s
+        - For query parameters with multiple values, each value is separated by either + or %20
+    */
     const schema = z.object({
       search: z.string().optional(),
-      // various filters
       term: z.string().optional(),
-      department: z.string().optional(),
-      // not sure how time filter will be formatted
-      // also not sure how section specific filters will work
+      department: z.nativeEnum(Department).optional(),
+      instructors: z.string().optional(),
+      /* 
+        Note: days should actually be an array of nativeEnum(DayOfWeek). However, because it is 
+        an array, the query representation is a string with the values separated by spaces. This 
+        means no validation is done to ensure that the days are proper values of DayOfWeek. Invalid
+        values will instead be ignored.
+      */
+      days: z.string().optional(),
     })
 
     const query = schema.parse(req.query)
@@ -26,7 +38,8 @@ router.get(
     /*
         This structure is a list of queries where each query ensures that one of the search terms 
         are either in the name or description of a course. The elements of this list will be combined
-        in the final query to filter only courses that contain all of the search terms.
+        in the final query to filter only courses that contain all of the search terms. Note: this
+        implementation requires that a course includes ALL search terms exactly as they are spelled.
     */
     const searchTermsDbQuery = searchTerms.map(term => {
       return <any> {
@@ -46,16 +59,47 @@ router.get(
         ]
       }
     })
-    /* 
-      modifying the query parameter so it can be used in the final query to apply simple filters.
-      May need to do something more complex when adding section-specific filters.
-    */ 
-    delete query.search
+    
+    const daysNotInFilter = Object.values(DayOfWeek).filter(day => 
+      query.days ?
+      !query.days.split(' ').includes(day) :
+      false
+    )
+
+    /*
+      This structure ensures that a course fulfills all of the course-specific filters and
+      at least one of the sections fulfills all section-specific filters. This will be added to 
+      the final query.
+    */
+    const filterDbQuery = {
+      // section-specific filters
+      courseSections:  {
+        some: {
+          instructorIds: query.instructors ? {
+            hasSome: query.instructors.split(' ')
+          } : { hasEvery: [] },
+          NOT: {
+            meetings: {
+              some: {
+                daysOfWeek: {
+                  hasSome: daysNotInFilter
+                }
+              }
+            }
+          }
+        }, 
+      },
+      // TODO: meeting times
+      // course-specific filters
+      term: req.query.term,
+      department: req.query.department
+      // TODO: upper / lower level
+    }
 
     try {
       const courses = await client.course.findMany({
         where: {
-          AND: searchTermsDbQuery.concat([query])
+          AND: searchTermsDbQuery.concat([filterDbQuery])
         }
       })
       
