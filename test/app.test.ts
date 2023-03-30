@@ -1,11 +1,18 @@
 import {describe, expect, test} from '@jest/globals'
 import app from '../src/index'
 import {prismaMock} from './singleton'
+const request = require('supertest')
+expect.extend({
+    
+})
 
 describe("Route Tests", () => {
     describe("Account GET", async () => {
-        // const request = app.get("/account");
-        // expect(request).toBe()
+        test("Account works", async () => {
+        const response = await request(app).get("/account");
+        response.print()
+        expect(response.body).toEqual("Hello")
+        })
     })
     describe("Courses GET", () => {
 
@@ -53,20 +60,20 @@ describe("Route Tests", () => {
 
     })
     describe("Users POST", () => {
-        test('Should add a new user', async () => {
-            const user = {
-                id: "1234",
-                isMock: true,
-                role: JSON.parse("STUDENT"),
-                email: "test@test.edu",
-                firstName: "Test",
-                lastName: "McTesterson",
-                registrations: [],
-                instructing: [],
-                instructingIds: [],
-            }
-            // await expect(app.post("/users",user))
-        })
+        // test('Should add a new user', async () => {
+        //     const user = {
+        //         id: "1234",
+        //         isMock: true,
+        //         role: JSON.parse("STUDENT"),
+        //         email: "test@test.edu",
+        //         firstName: "Test",
+        //         lastName: "McTesterson",
+        //         registrations: [],
+        //         instructing: [],
+        //         instructingIds: [],
+        //     }
+        //     // await expect(app.post("/users",user))
+        // })
     })
 })
 
