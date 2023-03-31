@@ -18,7 +18,7 @@ beforeAll(async () => {
     token = sign({userId: "642486eb76ebc32a07efbde",})
 })
 afterAll( () => {
-    
+    app.disable
 })
 
 describe("Testing Requests", () => {
