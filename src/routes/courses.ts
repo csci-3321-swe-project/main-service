@@ -1,6 +1,6 @@
 import { DayOfWeek, Department, Term } from "@prisma/client";
 import { Router } from "express";
-import { z } from "zod";
+import { unknown, z } from "zod";
 import authorize from "../middleware/authorize";
 import client from "../utilities/client";
 import { TimeRange } from "../utilities/time-range";
@@ -31,7 +31,15 @@ router.get(
               .optional()
     })
 
-    const query = schema.parse(req.query)
+    type Query = z.infer<typeof schema>
+    let query = unknown as Query
+    try {
+      query = schema.parse(req.query)
+    } catch(err) {
+      next(err)
+    }
+
+    // const query = schema.parse(req.query)
     /*
         This structure is a list of queries where each query ensures that one of the search terms 
         are either in the name or description of a course. The elements of this list will be combined
