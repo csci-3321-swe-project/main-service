@@ -1,8 +1,9 @@
 import { DayOfWeek, Department, Term } from "@prisma/client";
 import { Router } from "express";
-import { unknown, z } from "zod";
+import { z } from "zod";
 import authorize from "../middleware/authorize";
 import client from "../utilities/client";
+import queryArrayParam from "../utilities/query-param";
 import { TimeRange } from "../utilities/time-range";
 
 const router = Router();
@@ -11,109 +12,50 @@ router.get(
   "/",
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
   async (req, res, next) => {
-    /*
-      URL formatting:
-        - URL can contain 0 or more query parameters
-        - Each query parameter is formatted as paramterName=value
-        - Query parameters are separated by &'s
-        - For query parameters with multiple values, each value is separated by either + or %20
-    */
     const schema = z.object({
-      search: z.string()
-                .transform(str => str.split(' '))
-                .optional(),
-      term: z.string().optional(),
-      department: z.nativeEnum(Department).optional(),
-      instructors: z.string().optional(),
-      days: z.string()
-              .transform(str => str.split(' '))
-              .pipe(z.array(z.nativeEnum(DayOfWeek)))
-              .optional()
-    })
-
-    type Query = z.infer<typeof schema>
-    let query = unknown as Query
-    try {
-      query = schema.parse(req.query)
-    } catch(err) {
-      next(err)
-    }
-
-    // const query = schema.parse(req.query)
-    /*
-        This structure is a list of queries where each query ensures that one of the search terms 
-        are either in the name or description of a course. The elements of this list will be combined
-        in the final query to filter only courses that contain all of the search terms. Note: this
-        implementation requires that a course includes ALL search terms exactly as they are spelled.
-    */
-    const searchTermsDbQuery = query.search?.map(term => {
-      return <any> {
-        OR: [
-          {
-            name: {
-              contains: term,
-              mode: 'insensitive'
-            }
-          },
-          {
-            description: {
-              contains: term,
-              mode: 'insensitive'
-            }
-          }
-        ]
-      }
-    }) || []
-    
-    const daysNotInFilter = Object.values(DayOfWeek).filter(day => 
-      query.days ?
-      !query.days.includes(day) :
-      false
-    )
-
-    /*
-      This structure ensures that a course fulfills all of the course-specific filters and
-      at least one of the sections fulfills all section-specific filters. This will be added to 
-      the final query.
-    */
-    const filterDbQuery = {
-      // section-specific filters
-      courseSections:  {
-        some: {
-          instructorIds: query.instructors ? {
-            hasSome: query.instructors.split(' ')
-          } : { hasEvery: [] },
-          NOT: {
-            meetings: {
-              some: {
-                daysOfWeek: {
-                  hasSome: daysNotInFilter
-                }
-              }
-            }
-          }
-        }, 
-      },
-      // course-specific filters
-      term: req.query.term,
-      department: req.query.department
-      // TODO: meeting times and upper / lower level
-    }
+      q: queryArrayParam(z.string()), // Query
+      d: queryArrayParam(z.nativeEnum(DayOfWeek)).optional(), // Day of Week
+      term: z.nativeEnum(Term).optional(), // Term
+      dept: z.nativeEnum(Department).optional(), // Department
+    });
 
     try {
+      const query = schema.parse(req.query);
       const courses = await client.course.findMany({
         where: {
-          AND: searchTermsDbQuery.concat([filterDbQuery])
-        }
-      })
-      
-      res.status(200).json({ courses: courses })
-    } catch(err) {
-      next(err)
-    }
+          OR: query.q.map((q) => ({
+            OR: {
+              name: {
+                contains: q,
+                mode: "insensitive",
+              },
+              description: {
+                contains: q,
+                mode: "insensitive",
+              },
+            },
+          })),
+          term: query.term,
+          department: query.dept,
+          courseSections: {
+            some: {
+              meetings: {
+                some: {
+                  daysOfWeek: {
+                    hasSome: query.d,
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
 
+      res.status(200).json({ courses: courses });
+    } catch (err) {
+      next(err);
+    }
   }
-    
 );
 
 router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
