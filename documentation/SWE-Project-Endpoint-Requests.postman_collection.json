@@ -1,0 +1,602 @@
+{
+	"info": {
+		"_postman_id": "702baf20-eb53-4797-a7f3-b164838ef838",
+		"name": "SWE-Project-Endpoint-Requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26189054"
+	},
+	"item": [
+		{
+			"name": "account",
+			"item": [
+				{
+					"name": "get account",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDI0ODZlYjc2ZWJjMzJhMDczZWZkYmUiLCJpYXQiOjE2ODAxMTU2MTJ9.caswxTS9KKz0TXwd1c8d4i-qfBwdCD4NbwRlIdwhEpk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/account",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"account"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "courses",
+			"item": [
+				{
+					"name": "get search results",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDBhNDkwODNiNDRmZTJmMjcxNWNkZTMiLCJpYXQiOjE2Nzk4NTY1MzB9.MEVVfBdeUJYgLOrZEeBfM89HYDgv4CnbLg-XSaXBpzk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/courses?search=example+fake&term=SPRING_2021&department=COMPUTER_SCIENCE&days=MONDAY+WEDNESDAY+FRIDAY",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"courses"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "example+fake"
+								},
+								{
+									"key": "term",
+									"value": "SPRING_2021"
+								},
+								{
+									"key": "department",
+									"value": "COMPUTER_SCIENCE"
+								},
+								{
+									"key": "days",
+									"value": "MONDAY+WEDNESDAY+FRIDAY"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDFhMDZkYjQ4MGUxZmI5YTRjZGFhZDEiLCJpYXQiOjE2Nzk1OTY2NjV9.h1QQKl1mvGulIt5xb5sl4sH3a6Zq13h2tJhZ2MVcoQQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/courses/64248ad776ebc32a073efdbf",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"courses",
+								"64248ad776ebc32a073efdbf"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get course section",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDI0ODZlYjc2ZWJjMzJhMDczZWZkYmUiLCJpYXQiOjE2ODAxMTU2MTJ9.caswxTS9KKz0TXwd1c8d4i-qfBwdCD4NbwRlIdwhEpk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/courses/64248ad776ebc32a073efdbf/sections/64248bc776ebc32a073efdc0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"courses",
+								"64248ad776ebc32a073efdbf",
+								"sections",
+								"64248bc776ebc32a073efdc0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get registration",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDI0OTFkNzc2ZWJjMzJhMDczZWZkYzEiLCJpYXQiOjE2ODAxMTgyMzd9.3JJrzvulz47QOW_Z0PKPNW4BFY8T3mf0BdM29dU-o-Y",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/courses/64248ad776ebc32a073efdbf/sections/64248bc776ebc32a073efdc0/registrations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"courses",
+								"64248ad776ebc32a073efdbf",
+								"sections",
+								"64248bc776ebc32a073efdc0",
+								"registrations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDFhMDZkYjQ4MGUxZmI5YTRjZGFhZDEiLCJpYXQiOjE2Nzk0MzExMTR9.2p_8Ncesx_UTxgFNOJHBq4U4d72Pzaoyku2MZfjQuOs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Example Course\",\n    \"term\":\"SPRING_2021\",\n    \"department\":\"COMPUTER_SCIENCE\",\n    \"code\":1305,\n    \"description\":\"Fake CS course\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/courses",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create course section",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDFhMDZkYjQ4MGUxZmI5YTRjZGFhZDEiLCJpYXQiOjE2Nzk0MzExMTR9.2p_8Ncesx_UTxgFNOJHBq4U4d72Pzaoyku2MZfjQuOs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"meetings\":[\n        {\n            \"daysOfWeek\":[\"MONDAY\",\"WEDNESDAY\",\"FRIDAY\"],\n            \"startTime\":\"12:30:00\",\n            \"endTime\":\"13:30:00\",\n            \"location\":\"CSI-388\"\n        }\n    ],\n    \"instructorIds\":[\"641a06db480e1fb9a4cdaad1\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/courses/64248ad776ebc32a073efdbf/sections",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"courses",
+								"64248ad776ebc32a073efdbf",
+								"sections"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create registration",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDI0OTFkNzc2ZWJjMzJhMDczZWZkYzEiLCJpYXQiOjE2ODAxMTgyMzd9.3JJrzvulz47QOW_Z0PKPNW4BFY8T3mf0BdM29dU-o-Y",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/courses/64248ad776ebc32a073efdbf/sections/64248bc776ebc32a073efdc0/registrations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"courses",
+								"64248ad776ebc32a073efdbf",
+								"sections",
+								"64248bc776ebc32a073efdc0",
+								"registrations"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDBhNDkwODNiNDRmZTJmMjcxNWNkZTMiLCJpYXQiOjE2Nzk2ODU2NTB9.ocCepPUPdsR7EdSleymhIxDPc24JZ_6m46GEj7PcMVY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"An Example Course\",\n    \"term\":\"FALL_2021\",\n    \"department\":\"ART_HISTORY\",\n    \"code\":1306,\n    \"description\":\"This is not a real course\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/courses/64248ad776ebc32a073efdbf",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"courses",
+								"64248ad776ebc32a073efdbf"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update course section",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDI0ODZlYjc2ZWJjMzJhMDczZWZkYmUiLCJpYXQiOjE2ODAxMTU2MTJ9.caswxTS9KKz0TXwd1c8d4i-qfBwdCD4NbwRlIdwhEpk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"meetings\":[\n        {\n            \"daysOfWeek\":[\"TUESDAY\", \"WEDNESDAY\"],\n            \"startTime\":\"12:30:00\",\n            \"endTime\":\"13:30:00\",\n            \"location\":\"CSI-388\"\n        }\n    ],\n    \"instructorIds\":[\"642486eb76ebc32a073efdbe\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/courses/64248ad776ebc32a073efdbf/sections/64248bc776ebc32a073efdc0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"courses",
+								"64248ad776ebc32a073efdbf",
+								"sections",
+								"64248bc776ebc32a073efdc0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDI0ODZlYjc2ZWJjMzJhMDczZWZkYmUiLCJpYXQiOjE2ODAxMTg3NTJ9.Ph0jpFGj6egNU9cDPWdHSovV5wNNoHfnU0CE5gBfPqY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/courses/64248ad776ebc32a073efdbf",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"courses",
+								"64248ad776ebc32a073efdbf"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete course section",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDI0ODZlYjc2ZWJjMzJhMDczZWZkYmUiLCJpYXQiOjE2ODAxMTg3NTJ9.Ph0jpFGj6egNU9cDPWdHSovV5wNNoHfnU0CE5gBfPqY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/courses/64248ad776ebc32a073efdbf/sections/64248bc776ebc32a073efdc0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"courses",
+								"64248ad776ebc32a073efdbf",
+								"sections",
+								"64248bc776ebc32a073efdc0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete registration",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDI0OTFkNzc2ZWJjMzJhMDczZWZkYzEiLCJpYXQiOjE2ODAxMTgyMzd9.3JJrzvulz47QOW_Z0PKPNW4BFY8T3mf0BdM29dU-o-Y",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/courses/64248ad776ebc32a073efdbf/sections/64248bc776ebc32a073efdc0/registrations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"courses",
+								"64248ad776ebc32a073efdbf",
+								"sections",
+								"64248bc776ebc32a073efdc0",
+								"registrations"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "options",
+			"item": [
+				{
+					"name": "get options",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/options",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"options"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "tokens",
+			"item": [
+				{
+					"name": "generate token",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"example@email.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/tokens",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"tokens"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "create user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"student@email.com\",\n    \"firstName\":\"Example\",\n    \"lastName\":\"Student\",\n    \"role\":\"STUDENT\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/users?email=example@email.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "example@email.com"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
