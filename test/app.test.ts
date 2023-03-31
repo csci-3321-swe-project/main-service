@@ -5,7 +5,6 @@ import {sign} from '../src/utilities/tokens'
 import { ClientRequest } from 'http'
 import client from '../src/utilities/client'
 import { Prisma } from '@prisma/client'
-import { stat } from 'fs'
 const request = require('supertest')
 
 const app = createServer()
@@ -18,7 +17,7 @@ beforeAll(async () => {
     token = sign({userId: "642486eb76ebc32a07efbde",})
 })
 afterAll( () => {
-    app.disable
+    
 })
 
 describe("Testing Requests", () => {
@@ -65,7 +64,33 @@ describe("Testing Requests", () => {
 
     })
     describe("Tokens POST", () => {
-
+        const input = {
+            email: "example@email.com"
+        }
+        const userPayload = {
+            id:"642486eb76ebc32a07efbde",
+            isMock: true,
+            role: "ADMINISTRATOR",
+            email: "example@email.com",
+            firstName: "Example",
+            lastName: "User",
+            instructingIds: [],
+        }
+        describe("Sent valid email", () => {
+            it("Should return 201 and token", async () => {
+                const mockTokenCreation = jest
+                    .spyOn(client.user, "findUniqueOrThrow")
+                    // @ts-ignore
+                    .mockReturnValueOnce(userPayload)
+                const {statusCode, text} = await request(app)
+                    .post("/tokens")
+                    .send(input)
+                expect(statusCode).toBe(201)
+                expect(text).toEqual(token)
+                // @ts-ignore
+                expect(mockTokenCreation).toHaveBeenCalledWith({where: {email: input.email}})
+            })
+        })
     })
     describe("Users GET", () => {
         const userPayload = [ 
@@ -82,8 +107,10 @@ describe("Testing Requests", () => {
         const query = "email=example@email.com"
         describe("Sending email that does exist",() => {
             it("Should return 200 and an array of users", async () => {
-                // @ts-ignore
-                const mockUserSearch = jest.spyOn(client.user, "findMany").mockReturnValueOnce(userPayload)
+                const mockUserSearch = jest
+                    .spyOn(client.user, "findMany")
+                    // @ts-ignore
+                    .mockReturnValueOnce(userPayload)
                 const {statusCode, body} = await request(app)
                     .get(`/users?${query}`)
                     .set('Authorization', `Bearer ${token}`)
@@ -94,7 +121,9 @@ describe("Testing Requests", () => {
         })
         describe("Sending an email that doesn't exist", () => {
             it("Should return a 400", async () => {
-                const mockUserSearch = jest.spyOn(client.user, "findMany").mockRejectedValueOnce("Email does not exist")
+                const mockUserSearch = jest
+                .spyOn(client.user, "findMany")
+                .mockRejectedValueOnce("Email does not exist")
                 const {statusCode} = await request(app)
                     .get("/users?email=wrongdotcom")
                     .set('Authorization', `Bearer ${token}`)
@@ -112,7 +141,7 @@ describe("Testing Requests", () => {
             role: "ADMINISTRATOR",
         }
         const userPayload = {
-            //id:"642486eb76ebc32a07efbde",
+            id:"642486eb76ebc32a07efbde",
             isMock: true,
             role: "ADMINISTRATOR",
             email: "example@email.com",
@@ -122,8 +151,10 @@ describe("Testing Requests", () => {
         }
         describe("Sends correct user inputs", ()=>{
             it("Should return 201 and the created user", async () => {
-                // @ts-ignore
-                const mockCreateUser = jest.spyOn(client.user, "create").mockReturnValueOnce(userPayload)
+                const mockCreateUser = jest
+                    .spyOn(client.user, "create")
+                    // @ts-ignore
+                    .mockReturnValueOnce(userPayload)
                 const {statusCode, body} = await request(app)
                     .post("/users")
                     .send(userInput)
@@ -135,7 +166,9 @@ describe("Testing Requests", () => {
         })
         describe("Sends incorrect user inputes", () => {
             it("Should return a 400", async () => {
-                const mockCreateUser = jest.spyOn(client.user, "create").mockRejectedValueOnce("Incorrect user values")
+                const mockCreateUser = jest
+                    .spyOn(client.user, "create")
+                    .mockRejectedValueOnce("Incorrect user values")
                 const {statusCode} = await request(app)
                     .post("/users")
                     .send({something: "else"})
