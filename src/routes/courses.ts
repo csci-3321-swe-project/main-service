@@ -13,10 +13,9 @@ router.get(
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
   async (req, res, next) => {
     const schema = z.object({
-      q: queryArrayParam(z.string()), // Query
-      d: queryArrayParam(z.nativeEnum(DayOfWeek)).optional(), // Day of Week
-      term: z.nativeEnum(Term).optional(), // Term
-      dept: z.nativeEnum(Department).optional(), // Department
+      q: queryArrayParam(z.string()),
+      term: z.nativeEnum(Term).optional(),
+      dept: z.nativeEnum(Department).optional(),
     });
 
     try {
@@ -24,34 +23,27 @@ router.get(
       const courses = await client.course.findMany({
         where: {
           OR: query.q.map((q) => ({
-            OR: {
-              name: {
-                contains: q,
-                mode: "insensitive",
+            OR: [
+              {
+                name: {
+                  contains: q,
+                  mode: "insensitive",
+                },
               },
-              description: {
-                contains: q,
-                mode: "insensitive",
+              {
+                description: {
+                  contains: q,
+                  mode: "insensitive",
+                },
               },
-            },
+            ],
           })),
           term: query.term,
           department: query.dept,
-          courseSections: {
-            some: {
-              meetings: {
-                some: {
-                  daysOfWeek: {
-                    hasSome: query.d,
-                  },
-                },
-              },
-            },
-          },
         },
       });
 
-      res.status(200).json({ courses: courses });
+      res.status(200).send(courses);
     } catch (err) {
       next(err);
     }
