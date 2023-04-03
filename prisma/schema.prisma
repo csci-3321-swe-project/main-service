@@ -64,6 +64,9 @@ model User {
   coursesCreated Course[]        @relation(name: "createdBy")
   coursesUpdated Course[]        @relation(name: "updatedBy", fields: [updatedIds], references: [id])
   updatedIds     String[]        @db.ObjectId
+  secCreated     CourseSection[] @relation(name: "sectionCreatedBy")
+  secUpdated     CourseSection[] @relation(name: "sectionUpdatedByUsers", fields: [secUpdatedIds], references: [id])
+  secUpdatedIds  String[]     @db.ObjectId
 }
 
 model Registration {
@@ -84,10 +87,11 @@ model Course {
   code           Int
   description    String
   courseSections CourseSection[]
-  
+  //Auditing  -  Creation
   createdBy      User            @relation(name: "createdBy", fields: [createdById], references: [id])
   createdById    String          @db.ObjectId
   createdOn      String
+  //Auditing  -  Updates
   updatedByUsers User[]          @relation(name: "updatedBy", fields: [updatedByIds], references: [id])
   updatedByIds   String[]        @db.ObjectId
   updatedOnTimes String[]
@@ -109,4 +113,13 @@ model CourseSection {
   instructors   User[]         @relation(name: "instructors", fields: [instructorIds], references: [id])
   instructorIds String[]       @db.ObjectId
   registrations Registration[]
+ 
+  // //Auditing  -  creations
+  sectionCreatedBy      User            @relation(name: "sectionCreatedBy", fields: [sectionCreatedById], references: [id])
+  sectionCreatedById    String          @db.ObjectId
+  sectionCreatedOn      String
+  // //Auditing  -  updates
+  sectionUpdatedByUsers User[]          @relation(name: "sectionUpdatedByUsers", fields: [sectionUpdatedByIds], references: [id])
+  sectionUpdatedByIds   String[]        @db.ObjectId
+  sectionUpdatedOnTimes String[]
 }

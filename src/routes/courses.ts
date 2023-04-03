@@ -179,7 +179,7 @@ router.delete(
   }
 );
 
-// Create Course Section
+// Create Course Section 
 router.post(
   "/:courseId/sections",
   authorize(["ADMINISTRATOR"]),
@@ -197,7 +197,7 @@ router.post(
         )
         .nonempty(),
     });
-
+    const currentTime = (new Date()).toString()
     try {
       const body = schema.parse(req.body);
       // Check that end time is after start time
@@ -211,7 +211,11 @@ router.post(
       const newCourseSection = await client.courseSection.create({
         data: {
           courseId: req.params.courseId,
-          //TODO: Create Course Section Audit
+          //Course Section Audit attributes
+          sectionCreatedById: res.locals.user.id,
+          sectionCreatedOn: currentTime,
+          sectionUpdatedByIds: [res.locals.user.id],
+          sectionUpdatedOnTimes: [currentTime],
           ...body,
         },
       });
@@ -283,10 +287,8 @@ router.put(
         )
         .nonempty(),
     });
-
     try {
       const body = schema.parse(req.body);
-
       // Check that end time is after start time
       for (const meeting of body.meetings) {
         if (!new TimeRange({ ...meeting }).isValid) {
@@ -294,10 +296,16 @@ router.put(
           return;
         }
       }
-
+      const currentTime = (new Date()).toString()
       const updatedCourseSection = await client.courseSection.update({
         where: { id: req.params.sectionId },
         data: {
+          sectionUpdatedByIds: {
+            push: res.locals.user.id
+          },
+          sectionUpdatedOnTimes: {
+            push: currentTime,
+          },
           ...body,
         },
       });
