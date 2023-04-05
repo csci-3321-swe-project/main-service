@@ -6,6 +6,7 @@ This service is a RESTful API for a class registration system.
 
 - [NodeJS 18](https://nodejs.org)
 - [MongoDB Instance](#creating-database)
+- [Prisma SDK](#generating-data-layer-sdk)
 
 ## Creating Database
 
@@ -18,6 +19,11 @@ A data layer SDK is generated using [Prisma](https://www.prisma.io/). To start, 
 ## Environment Variables
 
 Environment variables are defined in a `.env` file. This file is defined locally, and not tracked in source control. To define variables for your environment, copy the `.env.template` file contents to a new file called `.env`, and fill in the variables with your definitions.
+
+## Getting Started
+
+- Run `npm i`
+- Run `npm run gen`
 
 ## Running Development Server
 
