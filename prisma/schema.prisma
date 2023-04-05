@@ -13,6 +13,7 @@ enum Role {
   ADMINISTRATOR
 }
 
+// TODO: Make this editable by administrators.
 enum Department {
   ART_HISTORY
   BIOLOGY
@@ -33,6 +34,16 @@ enum Department {
   // ...and more if we want to include a complete list.
 }
 
+// TODO: Make this editable by administrators.
+enum Term {
+  SPRING_2021
+  FALL_2021
+  SPRING_2022
+  FALL_2022
+  SPRING_2023
+  // ...and more if we want to include a complete list.
+}
+
 enum DayOfWeek {
   MONDAY
   TUESDAY
@@ -41,14 +52,6 @@ enum DayOfWeek {
   FRIDAY
   SATURDAY
   SUNDAY
-}
-
-enum Term {
-  SPRING_2021
-  FALL_2021
-  SPRING_2022
-  FALL_2022
-  SPRING_2023
 }
 
 model User {
@@ -69,6 +72,8 @@ model Registration {
   userId          String        @db.ObjectId
   courseSection   CourseSection @relation(fields: [courseSectionId], references: [id])
   courseSectionId String        @db.ObjectId
+  createdAt       DateTime      @default(now())
+  priority        Boolean       @default(false)
 
   @@unique([userId, courseSectionId])
 }
@@ -98,4 +103,5 @@ model CourseSection {
   instructors   User[]         @relation(name: "instructors", fields: [instructorIds], references: [id])
   instructorIds String[]       @db.ObjectId
   registrations Registration[]
+  capacity      Int
 }
