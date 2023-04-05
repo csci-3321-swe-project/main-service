@@ -146,6 +146,7 @@ router.post(
   async (req, res, next) => {
     const schema = z.object({
       instructorIds: z.array(z.string()).nonempty(),
+      capacity: z.number().min(1),
       meetings: z
         .array(
           z.object({
@@ -160,6 +161,7 @@ router.post(
 
     try {
       const body = schema.parse(req.body);
+
       // Check that end time is after start time
       for (const meeting of body.meetings) {
         if (!new TimeRange({ ...meeting }).isValid) {
@@ -228,6 +230,7 @@ router.put(
   async (req, res, next) => {
     const schema = z.object({
       instructorIds: z.array(z.string()).nonempty(),
+      capacity: z.number().min(1),
       meetings: z
         .array(
           z.object({
@@ -266,18 +269,27 @@ router.put(
 );
 
 router.get(
-  "/:courseId/sections/:sectionId/registrations",
+  "/:courseId/sections/:sectionId/roster",
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
   async (req, res, next) => {
     try {
       const courseSectionId = req.params.sectionId;
 
+      const courseSection = await client.courseSection.findUniqueOrThrow({
+        where: { id: courseSectionId },
+      });
+
       const registrations = await client.registration.findMany({
         where: { courseSectionId },
         include: { user: true },
+        orderBy: [{ priority: "desc" }, { createdAt: "asc" }],
       });
 
-      res.status(200).send(registrations);
+      const students = registrations.slice(0, courseSection.capacity);
+      const waitlist = registrations.splice(courseSection.capacity);
+      const roster = { students, waitlist };
+
+      res.status(200).send(roster);
     } catch (err) {
       next(err);
     }
@@ -322,6 +334,32 @@ router.post(
   }
 );
 
+router.put(
+  "/:courseId/sections/:sectionId/registrations/:registrationId",
+  authorize(["PROFESSOR", "ADMINISTRATOR"]),
+  async (req, res, next) => {
+    const schema = z.object({
+      priority: z.boolean(),
+    });
+
+    try {
+      const body = schema.parse(req.body);
+
+      const updatedRegistration = await client.registration.update({
+        where: { id: req.params.registrationId },
+        data: {
+          ...body,
+        },
+        include: { user: true },
+      });
+
+      res.status(201).send(updatedRegistration);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 router.delete(
   "/:courseId/sections/:sectionId/registrations",
   authorize(["STUDENT", "PROFESSOR", "ADMINISTRATOR"]),
@@ -337,7 +375,7 @@ router.delete(
         },
       });
 
-      res.status(201).send(deletedRegistration);
+      res.status(200).send(deletedRegistration);
     } catch (err) {
       next(err);
     }
