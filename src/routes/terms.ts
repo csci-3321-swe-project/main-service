@@ -7,6 +7,7 @@ import { TimeRange } from "../utilities/time-range";
 
 const router = Router();
 
+// get all terms
 router.get(
   "/",
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
@@ -21,6 +22,7 @@ router.get(
   }
 );
 
+// get current term
 router.get(
   "/current",
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
@@ -45,6 +47,7 @@ router.get(
   }
 );
 
+// get specified term
 router.get(
   "/:termId",
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
@@ -61,6 +64,7 @@ router.get(
   }
 );
 
+// create new term
 router.post(
   "/",
   authorize(["ADMINISTRATOR"]),
@@ -120,6 +124,7 @@ router.post(
     }
 })
 
+// update term
 router.put("/:termId", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   const schema = z.object({
     season: z.nativeEnum(Season).optional(),
@@ -190,6 +195,7 @@ router.put("/:termId", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   }
 })
 
+// delete term
 router.delete(
   "/:termId",
   authorize(["ADMINISTRATOR"]),
