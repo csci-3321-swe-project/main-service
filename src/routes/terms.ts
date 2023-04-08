@@ -134,7 +134,22 @@ router.put("/:termId", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   } catch(err) {
     next(err)
   }
-  
 })
+
+router.get(
+  "/:termId",
+  authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
+  async (req, res, next) => {
+    try {
+      const course = await client.termModel.findUniqueOrThrow({
+        where: { id: req.params.termId },
+      });
+
+      res.status(200).send(course);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 export default router;
