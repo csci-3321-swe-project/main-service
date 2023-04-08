@@ -190,4 +190,22 @@ router.put("/:termId", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   }
 })
 
+router.delete(
+  "/:termId",
+  authorize(["ADMINISTRATOR"]),
+  async (req, res, next) => {
+    try {
+      const deletedTerm = await client.term.delete({
+        where: {
+          id: req.params.termId
+        },
+      });
+
+      res.status(200).send(deletedTerm);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 export default router;
