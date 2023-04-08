@@ -9,7 +9,6 @@ router.get("/", (_, res) => {
     roles: options(Role),
     departments: options(Department),
     daysOfWeek: options(DayOfWeek),
-    terms: options(Term),
   });
 });
 

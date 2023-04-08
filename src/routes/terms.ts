@@ -22,6 +22,30 @@ router.get(
 );
 
 router.get(
+  "/current",
+  authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
+  async (req, res, next) => {
+    const currentDate = new Date()
+    try {
+      const term = await client.term.findFirstOrThrow({
+        where: { 
+          startTime: {
+            lt: currentDate
+          },
+          endTime : {
+            gt: currentDate
+          }
+        },
+      });
+
+      res.status(200).send(term);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.get(
   "/:termId",
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
   async (req, res, next) => {
