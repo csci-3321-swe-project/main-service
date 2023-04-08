@@ -7,6 +7,36 @@ import { TimeRange } from "../utilities/time-range";
 
 const router = Router();
 
+router.get(
+  "/",
+  authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
+  async (req, res, next) => {
+    try {
+      const terms = await client.termModel.findMany();
+
+      res.status(200).send(terms);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.get(
+  "/:termId",
+  authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
+  async (req, res, next) => {
+    try {
+      const term = await client.termModel.findUniqueOrThrow({
+        where: { id: req.params.termId },
+      });
+
+      res.status(200).send(term);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 router.post(
   "/",
   authorize(["ADMINISTRATOR"]),
@@ -135,21 +165,5 @@ router.put("/:termId", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
     next(err)
   }
 })
-
-router.get(
-  "/:termId",
-  authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
-  async (req, res, next) => {
-    try {
-      const course = await client.termModel.findUniqueOrThrow({
-        where: { id: req.params.termId },
-      });
-
-      res.status(200).send(course);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
 
 export default router;
