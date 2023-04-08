@@ -54,6 +54,11 @@ enum DayOfWeek {
   SUNDAY
 }
 
+enum Season {
+  FALL
+  SPRING
+}
+
 model User {
   id             String          @id @default(auto()) @map("_id") @db.ObjectId
   isMock         Boolean
@@ -104,4 +109,12 @@ model CourseSection {
   instructorIds String[]       @db.ObjectId
   registrations Registration[]
   capacity      Int
+}
+
+model TermModel {
+  id           String          @id @default(auto()) @map("_id") @db.ObjectId
+  season       Season
+  year         String
+  startTime    String
+  endTime      String
 }
