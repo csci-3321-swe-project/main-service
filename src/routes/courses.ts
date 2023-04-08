@@ -1,4 +1,4 @@
-import { DayOfWeek, Department, Term } from "@prisma/client";
+import { DayOfWeek, Department } from "@prisma/client";
 import { Router } from "express";
 import { z } from "zod";
 import authorize from "../middleware/authorize";
@@ -14,7 +14,7 @@ router.get(
   async (req, res, next) => {
     const schema = z.object({
       q: queryArrayParam(z.string()),
-      term: z.nativeEnum(Term).optional(),
+      termId: z.string().optional(),
       dept: z.nativeEnum(Department).optional(),
     });
 
@@ -38,7 +38,7 @@ router.get(
               },
             ],
           })),
-          term: query.term,
+          termId: query.termId,
           department: query.dept,
         },
       });
@@ -53,7 +53,7 @@ router.get(
 router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   const schema = z.object({
     name: z.string(),
-    term: z.nativeEnum(Term),
+    termId: z.string(),
     department: z.nativeEnum(Department),
     code: z.number(),
     description: z.string(),
@@ -92,7 +92,7 @@ router.put(
   async (req, res, next) => {
     const schema = z.object({
       name: z.optional(z.string()),
-      term: z.optional(z.nativeEnum(Term)),
+      termId: z.optional(z.string()),
       department: z.optional(z.nativeEnum(Department)),
       code: z.optional(z.number()),
       description: z.optional(z.string()),

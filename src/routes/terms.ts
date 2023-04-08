@@ -12,7 +12,7 @@ router.get(
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
   async (req, res, next) => {
     try {
-      const terms = await client.termModel.findMany();
+      const terms = await client.term.findMany();
 
       res.status(200).send(terms);
     } catch (err) {
@@ -26,7 +26,7 @@ router.get(
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
   async (req, res, next) => {
     try {
-      const term = await client.termModel.findUniqueOrThrow({
+      const term = await client.term.findUniqueOrThrow({
         where: { id: req.params.termId },
       });
 
@@ -54,7 +54,7 @@ router.post(
         res.sendStatus(400)
         return
       }
-      const conflicts = await client.termModel.findMany({
+      const conflicts = await client.term.findMany({
         where: {
           OR: [
             {
@@ -85,7 +85,7 @@ router.post(
       })
 
       if (conflicts.length == 0) {
-        const term = await client.termModel.create({data: body})
+        const term = await client.term.create({data: body})
         res.status(201).send(term)
       } else {
         res.sendStatus(400)
@@ -106,7 +106,7 @@ router.put("/:termId", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
 
   try {
     const body = schema.parse(req.body)
-    const term = await client.termModel.findUniqueOrThrow({
+    const term = await client.term.findUniqueOrThrow({
       where: { id: req.params.termId }
     })
     const {id, ...data} = {
@@ -119,7 +119,7 @@ router.put("/:termId", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
       return
     }
 
-    const conflicts = await client.termModel.findMany({
+    const conflicts = await client.term.findMany({
       where: {
         OR: [
           {
@@ -153,7 +153,7 @@ router.put("/:termId", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
     })
 
     if (conflicts.length == 0) {
-      const updatedTerm = await client.termModel.update({
+      const updatedTerm = await client.term.update({
         where: { id: req.params.termId },
         data: data
       })
