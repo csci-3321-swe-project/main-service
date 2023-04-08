@@ -44,13 +44,13 @@ router.post(
     const schema = z.object({
       season: z.nativeEnum(Season),
       year: z.string().regex(new RegExp(/\d{4}/)),
-      startTime: z.string(),
-      endTime: z.string()
+      startTime: z.string().datetime(),
+      endTime: z.string().datetime(),
     })
 
     try {
       const body = schema.parse(req.body)
-      if (Date.parse(body.startTime) >= Date.parse(body.endTime)) {
+      if (new Date(body.startTime) >= new Date(body.endTime)) {
         res.sendStatus(400)
         return
       }
@@ -114,7 +114,7 @@ router.put("/:termId", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
       ...body,
     }
 
-    if (Date.parse(data.startTime) >= Date.parse(data.endTime)) {
+    if (new Date(data.startTime) >= new Date(data.endTime)) {
       res.sendStatus(400)
       return
     }

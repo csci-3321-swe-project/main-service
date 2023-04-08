@@ -106,7 +106,7 @@ model Term {
   id           String          @id @default(auto()) @map("_id") @db.ObjectId
   season       Season
   year         String
-  startTime    String
-  endTime      String
+  startTime    DateTime
+  endTime      DateTime
   courses      Course[]
 }
