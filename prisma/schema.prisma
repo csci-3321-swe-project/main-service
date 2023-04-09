@@ -59,14 +59,18 @@ model User {
   firstName      String
   lastName       String
   registrations  Registration[]
+
   instructing    CourseSection[] @relation(name: "instructors", fields: [instructingIds], references: [id])
   instructingIds String[]        @db.ObjectId
+  
   coursesCreated Course[]        @relation(name: "createdBy")
   coursesUpdated Course[]        @relation(name: "updatedBy", fields: [updatedIds], references: [id])
   updatedIds     String[]        @db.ObjectId
   secCreated     CourseSection[] @relation(name: "sectionCreatedBy")
   secUpdated     CourseSection[] @relation(name: "sectionUpdatedByUsers", fields: [secUpdatedIds], references: [id])
   secUpdatedIds  String[]     @db.ObjectId
+  //reg test
+  usersReged     Registration[]        @relation(name: "registeredBy")
 }
 
 model Registration {
@@ -75,8 +79,11 @@ model Registration {
   userId          String        @db.ObjectId
   courseSection   CourseSection @relation(fields: [courseSectionId], references: [id])
   courseSectionId String        @db.ObjectId
-
   @@unique([userId, courseSectionId])
+  //Auditing - regtest
+  registeredBy      User            @relation(name: "registeredBy", fields: [registeredById], references: [id])
+  registeredById    String          @db.ObjectId
+  registeredOn      String
 }
 
 model Course {

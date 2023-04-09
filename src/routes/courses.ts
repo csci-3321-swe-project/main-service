@@ -360,11 +360,13 @@ router.post(
         res.sendStatus(400);
         return;
       }
-
+      const currentTime = (new Date()).toString()
       const newRegistration = await client.registration.create({
         data: {
           courseSectionId,
           userId,
+          registeredById: res.locals.user.id,
+          registeredOn: currentTime,
         },
         include: { user: true },
       });
