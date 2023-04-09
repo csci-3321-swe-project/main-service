@@ -34,16 +34,6 @@ enum Department {
   // ...and more if we want to include a complete list.
 }
 
-// TODO: Make this editable by administrators.
-enum Term {
-  SPRING_2021
-  FALL_2021
-  SPRING_2022
-  FALL_2022
-  SPRING_2023
-  // ...and more if we want to include a complete list.
-}
-
 enum DayOfWeek {
   MONDAY
   TUESDAY
@@ -52,6 +42,11 @@ enum DayOfWeek {
   FRIDAY
   SATURDAY
   SUNDAY
+}
+
+enum Season {
+  FALL
+  SPRING
 }
 
 model User {
@@ -81,7 +76,8 @@ model Registration {
 model Course {
   id             String          @id @default(auto()) @map("_id") @db.ObjectId
   name           String
-  term           Term
+  term           Term            @relation(fields: [termId], references: [id])
+  termId         String          @db.ObjectId
   department     Department
   code           Int
   description    String
@@ -104,4 +100,13 @@ model CourseSection {
   instructorIds String[]       @db.ObjectId
   registrations Registration[]
   capacity      Int
+}
+
+model Term {
+  id           String          @id @default(auto()) @map("_id") @db.ObjectId
+  season       Season
+  year         Int
+  startTime    DateTime
+  endTime      DateTime
+  courses      Course[]
 }

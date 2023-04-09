@@ -202,7 +202,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\":\"Example Course\",\n    \"term\":\"SPRING_2021\",\n    \"department\":\"COMPUTER_SCIENCE\",\n    \"code\":1305,\n    \"description\":\"Fake CS course\"\n}",
+							"raw": "{\n    \"name\":\"Example Course\",\n    \"termId\":\"6431b3719cdda98991d0ec26\",\n    \"department\":\"COMPUTER_SCIENCE\",\n    \"code\":1305,\n    \"description\":\"Fake CS course\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -240,7 +240,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n     \"meetings\":[\n        {\n            \"daysOfWeek\":[\"MONDAY\",\"WEDNESDAY\",\"FRIDAY\"],\n            \"startTime\":\"12:30:00\",\n            \"endTime\":\"13:30:00\",\n            \"location\":\"CSI-388\"\n        }\n    ],\n    \"instructorIds\":[\"641a06db480e1fb9a4cdaad1\"]\n}",
+							"raw": "{\n     \"meetings\":[\n        {\n            \"daysOfWeek\":[\"MONDAY\",\"WEDNESDAY\",\"FRIDAY\"],\n            \"startTime\":\"12:30:00\",\n            \"endTime\":\"13:30:00\",\n            \"location\":\"CSI-388\"\n        }\n    ],\n    \"instructorIds\":[\"641a06db480e1fb9a4cdaad1\"],\n    \"capacity\":20\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -248,7 +248,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/courses/64248ad776ebc32a073efdbf/sections",
+							"raw": "http://localhost:5000/courses/6431b5d2bbddb2f525ee9435/sections",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -256,7 +256,7 @@
 							"port": "5000",
 							"path": [
 								"courses",
-								"64248ad776ebc32a073efdbf",
+								"6431b5d2bbddb2f525ee9435",
 								"sections"
 							]
 						}
@@ -320,7 +320,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\":\"An Example Course\",\n    \"term\":\"FALL_2021\",\n    \"department\":\"ART_HISTORY\",\n    \"code\":1306,\n    \"description\":\"This is not a real course\"\n}",
+							"raw": "{\n    \"name\":\"An Example Course\",\n    \"termId\":\"6431b832591200e4b8c014cc\",\n    \"department\":\"ART_HISTORY\",\n    \"code\":1306,\n    \"description\":\"This is not a real course\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -328,7 +328,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/courses/64248ad776ebc32a073efdbf",
+							"raw": "http://localhost:5000/courses/6431b5d2bbddb2f525ee9435",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -336,7 +336,7 @@
 							"port": "5000",
 							"path": [
 								"courses",
-								"64248ad776ebc32a073efdbf"
+								"6431b5d2bbddb2f525ee9435"
 							]
 						}
 					},
@@ -591,6 +591,208 @@
 									"key": "email",
 									"value": "example@email.com"
 								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "terms",
+			"item": [
+				{
+					"name": "get terms",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDI0ODZlYjc2ZWJjMzJhMDczZWZkYmUiLCJpYXQiOjE2ODA3MDg1ODR9.C-bRCbRApw_RiONT9REpVNqOLAYn9-bPKmoznXgNm0s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/terms/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"terms",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get term",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDI0ODZlYjc2ZWJjMzJhMDczZWZkYmUiLCJpYXQiOjE2ODA3MDg1ODR9.C-bRCbRApw_RiONT9REpVNqOLAYn9-bPKmoznXgNm0s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/terms/6431b3719cdda98991d0ec26",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"terms",
+								"6431b3719cdda98991d0ec26"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get current term",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDI0ODZlYjc2ZWJjMzJhMDczZWZkYmUiLCJpYXQiOjE2ODA3MDg1ODR9.C-bRCbRApw_RiONT9REpVNqOLAYn9-bPKmoznXgNm0s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/terms/current",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"terms",
+								"current"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create term",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDI0ODZlYjc2ZWJjMzJhMDczZWZkYmUiLCJpYXQiOjE2ODA3MDg1ODR9.C-bRCbRApw_RiONT9REpVNqOLAYn9-bPKmoznXgNm0s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"season\":\"SPRING\",\n    \"year\":2023,\n    \"startTime\":\"2025-01-15T00:00:00Z\",\n    \"endTime\":\"2025-05-15T00:00:00Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/terms",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"terms"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update term",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDI0ODZlYjc2ZWJjMzJhMDczZWZkYmUiLCJpYXQiOjE2ODA3MDg1ODR9.C-bRCbRApw_RiONT9REpVNqOLAYn9-bPKmoznXgNm0s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"endTime\":\"2030-07-15T00:00:00Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/terms/6431bbc47d1de24f62a93524",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"terms",
+								"6431bbc47d1de24f62a93524"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete term",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDI0ODZlYjc2ZWJjMzJhMDczZWZkYmUiLCJpYXQiOjE2ODA3MDg1ODR9.C-bRCbRApw_RiONT9REpVNqOLAYn9-bPKmoznXgNm0s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/terms/6431f342788004fdce3b7eac",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"terms",
+								"6431f342788004fdce3b7eac"
 							]
 						}
 					},
