@@ -71,7 +71,9 @@ router.post(
   async (req, res, next) => {
     const schema = z.object({
       season: z.nativeEnum(Season),
-      year: z.string().regex(new RegExp(/\d{4}/)),
+      year: z.number().int()
+              .gte(999)
+              .lte(10000),
       startTime: z.string().datetime(),
       endTime: z.string().datetime(),
     })
@@ -88,37 +90,37 @@ router.post(
             {
               // end time is within the new term's start and end time
               endTime: {
-                gt: body.startTime,
-                lt: body.endTime
+                gte: body.startTime,
+                lte: body.endTime
               }
             },
             {
               // start time is within the new term's start and end time
               startTime: {
-                gt: body.startTime,
-                lt: body.endTime
+                gte: body.startTime,
+                lte: body.endTime
               }
             },
             {
               // new term is entirely within
               startTime: {
-                lt: body.startTime
+                lte: body.startTime
               },
               endTime: {
-                gt: body.endTime
+                gte: body.endTime
               }
             }
           ]
         }
       })
 
-      if (conflicts.length == 0) {
-        const term = await client.term.create({data: body})
-        res.status(201).send(term)
-      } else {
+      if (conflicts.length != 0) {
         res.sendStatus(400)
         return
       }
+
+      const term = await client.term.create({data: body})
+      res.status(201).send(term)
     } catch(err) {
       next(err)
     }
@@ -128,7 +130,10 @@ router.post(
 router.put("/:termId", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   const schema = z.object({
     season: z.nativeEnum(Season).optional(),
-    year: z.string().regex(new RegExp(/\d{4}/)).optional(),
+    year: z.number().int()
+            .gte(999)
+            .lte(10000)
+            .optional(),
     startTime: z.string().optional(),
     endTime: z.string().optional(),
   })
@@ -154,24 +159,24 @@ router.put("/:termId", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
           {
             // end time is within the new term's start and end time
             endTime: {
-              gt: data.startTime,
-              lt: data.endTime
+              gte: data.startTime,
+              lte: data.endTime
             }
           },
           {
             // start time is within the new term's start and end time
             startTime: {
-              gt: data.startTime,
-              lt: data.endTime
+              gte: data.startTime,
+              lte: data.endTime
             }
           },
           {
             // new term is entirely within
             startTime: {
-              lt: data.startTime
+              lte: data.startTime
             },
             endTime: {
-              gt: data.endTime
+              gte: data.endTime
             }
           }
         ],
@@ -181,15 +186,16 @@ router.put("/:termId", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
       }
     })
 
-    if (conflicts.length == 0) {
-      const updatedTerm = await client.term.update({
-        where: { id: req.params.termId },
-        data: data
-      })
-      res.status(200).send(updatedTerm)
-    } else {
+    if (conflicts.length != 0) {
       res.sendStatus(400)
+      return
     }
+
+    const updatedTerm = await client.term.update({
+      where: { id: req.params.termId },
+      data: data
+    })
+    res.status(200).send(updatedTerm)
   } catch(err) {
     next(err)
   }
