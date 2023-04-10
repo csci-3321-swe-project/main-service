@@ -76,7 +76,10 @@ router.get(
     try {
       const course = await client.course.findUniqueOrThrow({
         where: { id: req.params.courseId },
-        include: { courseSections: { include: { instructors: true } } },
+        include: {
+          courseSections: { include: { instructors: true } },
+          term: true,
+        },
       });
 
       res.status(200).send(course);
