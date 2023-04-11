@@ -32,6 +32,6 @@ jobs:
         run: yarn test
         env:
           PORT: 5000
-          DATABASE_URL: data.com
+          DATABASE_URL: http://testdatabase.com
           JWT_SECRET: 2b1df017d94417d0fa4e5c3dfde5dee28bd9b3525dd028ec55970ff4bc350c2f4169c7512ae6bc6896b4354516dd5238ca64d2f560db68a1b5a5029dcc1380e4
 
