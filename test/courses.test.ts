@@ -79,9 +79,11 @@ describe("Testing course requests", () => {
         })
     })
     describe("CourseId GET", () => {
-        describe("Sending administration authorization", () =>{
-            it("Should return a 200 and the course and a existing courseId")
-        })
+        // describe("Sending administration authorization", () =>{
+        //     it("Should return a 200 and the course and a existing courseId", ()=>{
+
+        //     })
+        // })
     })
     describe("CourseId PUT", () => {
 
