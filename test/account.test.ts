@@ -2,7 +2,7 @@ import {describe, expect} from '@jest/globals'
 import createServer from '../src/utilities/server'
 import {sign, parse} from '../src/utilities/tokens'
 import client from '../src/utilities/client'
-import {userPayload, invalRoleUserPayload} from './testVariables'
+import {adminPayload, invalRoleUserPayload} from './testVariables'
 
  const request = require('supertest')
  const app = createServer()
@@ -19,12 +19,12 @@ describe("Testing account requests", () => {
                 const mockAuthorization = jest
                     .spyOn(client.user,"findUnique")
                     // @ts-ignore
-                    .mockReturnValue(userPayload)
+                    .mockReturnValue(adminPayload)
                 const {statusCode, body} = await request(app)
                     .get("/account")
                     .set('Authorization', `Bearer ${token}`)
                 expect(statusCode).toBe(200)
-                expect(body).toEqual(userPayload)
+                expect(body).toEqual(adminPayload)
                 expect(mockAuthorization).toHaveBeenCalledWith({where: {id: parse(token).userId}})
             })
         })

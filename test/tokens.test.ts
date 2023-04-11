@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 import createServer from '../src/utilities/server'
 import {sign, parse} from '../src/utilities/tokens'
 import client from '../src/utilities/client'
-import {userPayload,emailInput,nonMockUserPayload} from './testVariables'
+import {adminPayload,emailInput,nonMockUserPayload} from './testVariables'
 
  const request = require('supertest')
  const app = createServer()
@@ -18,7 +18,7 @@ describe("Tokens POST", () => {
             const mockTokenCreation = jest
                 .spyOn(client.user, "findUniqueOrThrow")
                 // @ts-ignore
-                .mockReturnValueOnce(userPayload)
+                .mockReturnValueOnce(adminPayload)
             const {statusCode, text} = await request(app)
                 .post("/tokens")
                 .send(emailInput)

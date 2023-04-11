@@ -6,10 +6,30 @@ export const userInput = {
     role: "ADMINISTRATOR",
 }
 
-export const userPayload = {
+export const adminPayload = {
     id:"642486eb76ebc32a07efbde",
     isMock: true,
     role: "ADMINISTRATOR",
+    email: "example@email.com",
+    firstName: "Example",
+    lastName: "User",
+    instructingIds: [],
+}
+
+export const studentPayload = {
+    id:"642486eb76ebc32a07efbde",
+    isMock: true,
+    role: "STUDENT",
+    email: "example@email.com",
+    firstName: "Example",
+    lastName: "User",
+    instructingIds: [],
+}
+
+export const professorPayload = {
+    id:"642486eb76ebc32a07efbde",
+    isMock: true,
+    role: "PROFESSORs",
     email: "example@email.com",
     firstName: "Example",
     lastName: "User",
@@ -34,6 +54,50 @@ export const invalRoleUserPayload = {
     firstName: "Example",
     lastName: "User",
     instructingIds: [],
+}
+
+export const courseInput = {
+    name: "Software Engineering",
+    term: "SPRING_2022",
+    department: "COMPUTER_SCIENCE",
+    code: 3321,
+    description: "A great time",
+}
+
+export const coursePayload = {
+    id: "64248ad776ebc32a873efdc0",
+    name: "Software Engineering",
+    term: "SPRING_2022",
+    department: "COMPUTER_SCIENCE",
+    code: 3321,
+    description: "A great time",
+}
+
+export const courseId = {courseId: 3321}
+
+export const courseSection = {
+    courseId: "64248ad77rbc32a073efdbf",
+    meetings: [
+        {
+            daysOfWeek: [
+                "Tuesday",
+                "Thursday"
+            ],
+            startTime: "12:30:00",
+            endTime: "13:30:00",
+            location: "CSI-388"
+        }
+    ],
+    instructorIds: ["641a06db480e1fb9a4cdaad1"],
+    instructors: [
+        professorPayload
+    ],
+    course: coursePayload
+}
+
+export const invalidCourseInput = {
+    name: "Software Engineering",
+    code: 3321,
 }
 
 export const emailInput = {

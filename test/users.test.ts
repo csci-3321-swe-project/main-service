@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 import createServer from '../src/utilities/server'
 import {sign} from '../src/utilities/tokens'
 import client from '../src/utilities/client'
-import {userInput, userPayload, emailQuery} from './testVariables'
+import {userInput, adminPayload, emailQuery} from './testVariables'
 
  const request = require('supertest')
  const app = createServer()
@@ -13,7 +13,7 @@ import {userInput, userPayload, emailQuery} from './testVariables'
  })
 
 describe("Users GET", () => {
-    const userArrayPayload = [userPayload]
+    const userArrayPayload = [adminPayload]
     describe("Sending email that does exist",() => {
         it("Should return 200 and an array of users", async () => {
             const mockUserSearch = jest
@@ -48,13 +48,13 @@ describe("Users POST", () => {
             const mockCreateUser = jest
                 .spyOn(client.user, "create")
                 // @ts-ignore
-                .mockReturnValueOnce(userPayload)
+                .mockReturnValueOnce(adminPayload)
             const {statusCode, body} = await request(app)
                 .post("/users")
                 .send(userInput)
                 .set('Authorization', `Bearer ${token}`)
             expect(statusCode).toBe(201)
-            expect(body).toEqual(userPayload)
+            expect(body).toEqual(adminPayload)
             expect(mockCreateUser).toHaveBeenCalledWith({data: {isMock: true,...userInput,}})
         })
     })
