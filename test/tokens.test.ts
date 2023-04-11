@@ -7,10 +7,7 @@ import {adminPayload,emailInput,nonMockUserPayload} from './testVariables'
  const request = require('supertest')
  const app = createServer()
 
- let token = ''
- beforeEach(async () => {
-     token = sign({userId: "642486eb76ebc32a07efbde",})
- })
+ let token = sign({userId: "642486eb76ebc32a07efbde",})
 
 describe("Tokens POST", () => {
     describe("Sent valid email", () => {

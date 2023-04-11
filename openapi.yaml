@@ -2,25 +2,50 @@ openapi: 3.1.0
 info:
   title: Tiger Claws
   description: |
-    This API allows for admin/professor users to create, edit, and delete sections for courses
+    "This API allows for admin/professor users to create, edit, and delete sections for courses 
     It allows for student users to register, waitlist, favorite, and drop course
-    It allows admin to add and drop students from courses
+    It allows admin to add and drop students from courses"
+  license:
+    name: "ISC"
   version: 0.1.0
 paths:
   /account:
     get:
-      summary: Gets the account of a user
-      description: Authroizes the account of the user and returns a response based on the authentication
+      summary: "Gets the account of a user"
+      description: "Authroizes the account of the user and returns a response based on the authentication"
       paramaters:
-        - name: "???"
-          in: query
-          schema: "???"
+        - name: "Authorizarion Token"
+          in: header
+          schema:
+            type: string
+          required: true
       resposes:
         "401":
-          description: Error with authorization
-        "???":
-          description: "???"
-          content: "???"
+          description: "Account does not exist"
+        "200":
+          description: "Account does exist"
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: 
+                    type: string
+                  isMock: 
+                    type: boolean
+                  role: 
+                    type: string
+                    enum:
+                      - "ADMINSTRATOR"
+                      - "STUDENT"
+                      - "PROFESSOR"
+                  fistName:
+                    type: string
+                  lastName:
+                    type: string
+                  instructingIds:
+                    type: array
+                    items: string
   /courses:
     get:
       summary: Gets the course

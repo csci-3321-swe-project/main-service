@@ -29,7 +29,7 @@ export const studentPayload = {
 export const professorPayload = {
     id:"642486eb76ebc32a07efbde",
     isMock: true,
-    role: "PROFESSORs",
+    role: "PROFESSOR",
     email: "example@email.com",
     firstName: "Example",
     lastName: "User",
@@ -76,7 +76,7 @@ export const coursePayload = {
 export const courseId = {courseId: 3321}
 
 export const courseSection = {
-    courseId: "64248ad77rbc32a073efdbf",
+    courseId,
     meetings: [
         {
             daysOfWeek: [
@@ -91,7 +91,18 @@ export const courseSection = {
     instructorIds: ["641a06db480e1fb9a4cdaad1"],
     instructors: [
         professorPayload
-    ],
+    ]
+}
+
+export const courseInfoPayload = {
+    coursePayload,
+    courseSections: [
+        courseSection
+    ]
+}
+
+export const courseSectionPayload = {
+    courseSection,
     course: coursePayload
 }
 

@@ -2,7 +2,7 @@ import {describe, expect} from '@jest/globals'
 import createServer from '../src/utilities/server'
 import {sign} from '../src/utilities/tokens'
 import client from "../src/utilities/client"
-import {courseInput, coursePayload, invalidCourseInput, studentPayload, adminPayload, professorPayload} from "./testVariables"
+import {courseInput, coursePayload, invalidCourseInput, studentPayload, adminPayload, professorPayload, courseInfoPayload, courseId} from "./testVariables"
 
 const request = require('supertest')
  const app = createServer()
@@ -79,11 +79,85 @@ describe("Testing course requests", () => {
         })
     })
     describe("CourseId GET", () => {
-        // describe("Sending administration authorization", () =>{
-        //     it("Should return a 200 and the course and a existing courseId", ()=>{
-
-        //     })
-        // })
+        describe("Sending with administration authorization", () =>{
+            it("Should return a 200 and the course and a existing courseId", async ()=>{
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockCourseId = jest
+                    .spyOn(client.course, "findUniqueOrThrow")
+                    // @ts-ignore
+                    .mockReturnValueOnce(courseInfoPayload)
+                const {statusCode, body} = await request(app)
+                    .get(`/courses/${courseId.courseId}`)
+                    .set('Authorization', `Bearer ${token}`)
+                expect(statusCode).toBe(200)
+                expect(body).toEqual(courseInfoPayload)
+                expect(mockCourseId).toHaveBeenLastCalledWith({
+                    where: {id: `${courseId.courseId}`},
+                    include: {courseSections: {include: {instructors: true}}}
+                })
+            })
+        })
+        describe("Sending with student authorization", () =>{
+            it("Should return a 200 and the course and a existing courseId", async ()=>{
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(studentPayload)
+                const mockCourseId = jest
+                    .spyOn(client.course, "findUniqueOrThrow")
+                    // @ts-ignore
+                    .mockReturnValueOnce(courseInfoPayload)
+                const {statusCode, body} = await request(app)
+                    .get(`/courses/${courseId.courseId}`)
+                    .set('Authorization', `Bearer ${token}`)
+                expect(statusCode).toBe(200)
+                expect(body).toEqual(courseInfoPayload)
+                expect(mockCourseId).toHaveBeenLastCalledWith({
+                    where: {id: `${courseId.courseId}`},
+                    include: {courseSections: {include: {instructors: true}}}
+                })
+            })
+        })
+        describe("Sending with professor authorization", () =>{
+            it("Should return a 200 and the course and a existing courseId", async ()=>{
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(professorPayload)
+                const mockCourseId = jest
+                    .spyOn(client.course, "findUniqueOrThrow")
+                    // @ts-ignore
+                    .mockReturnValueOnce(courseInfoPayload)
+                const {statusCode, body} = await request(app)
+                    .get(`/courses/${courseId.courseId}`)
+                    .set('Authorization', `Bearer ${token}`)
+                expect(statusCode).toBe(200)
+                expect(body).toEqual(courseInfoPayload)
+                expect(mockCourseId).toHaveBeenLastCalledWith({
+                    where: {id: `${courseId.courseId}`},
+                    include: {courseSections: {include: {instructors: true}}}
+                })
+            })
+        })
+        describe("Sending no authorization", () =>{
+            it("Should return a 401", async ()=>{
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockCourseId = jest
+                    .spyOn(client.course, "findUniqueOrThrow")
+                    // @ts-ignore
+                    .mockReturnValueOnce(courseInfoPayload)
+                const {statusCode} = await request(app)
+                    .get(`/courses/${courseId.courseId}`)
+                expect(statusCode).toBe(401)
+                expect(mockCourseId).not.toHaveBeenCalled()
+            })
+         })
     })
     describe("CourseId PUT", () => {
 
