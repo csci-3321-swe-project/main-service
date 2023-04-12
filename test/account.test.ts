@@ -10,6 +10,7 @@ import {adminPayload, invalRoleUserPayload} from './testVariables'
  let token = ''
  beforeEach(async () => {
      token = sign({userId: "642486eb76ebc32a07efbde",})
+     jest.resetAllMocks()
  })
 
 describe("Testing account requests", () => {

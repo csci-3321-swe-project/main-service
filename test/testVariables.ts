@@ -80,8 +80,8 @@ export const courseSection = {
     meetings: [
         {
             daysOfWeek: [
-                "Tuesday",
-                "Thursday"
+                "TUESDAY",
+                "THURSDAY"
             ],
             startTime: "12:30:00",
             endTime: "13:30:00",
@@ -101,6 +101,21 @@ export const courseInfoPayload = {
     ]
 }
 
+export const courseSectionInput = {
+    meetings: [
+        {
+            daysOfWeek: [
+                "TUESDAY",
+                "THURSDAY"
+            ],
+            startTime: "12:30:00",
+            endTime: "13:30:00",
+            location: "CSI-388"
+        }
+    ],
+    instructorIds: ["641a06db480e1fb9a4cdaad1"],
+}
+
 export const courseSectionPayload = {
     courseSection,
     course: coursePayload
@@ -114,6 +129,16 @@ export const invalidCourseInput = {
 export const emailInput = {
     email: "example@email.com"
 }
+
+export const registrationDeletionBatch = {count : 4}
+
+export const courseSectionDeletionBatch = {count : 2}
+
+export const transactionPayload = [
+    registrationDeletionBatch,
+    courseSectionDeletionBatch,
+    coursePayload,
+]
 
 export const emailQuery = "email=example@email.com"
 

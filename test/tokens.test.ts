@@ -7,11 +7,16 @@ import {adminPayload,emailInput,nonMockUserPayload} from './testVariables'
  const request = require('supertest')
  const app = createServer()
 
- let token = sign({userId: "642486eb76ebc32a07efbde",})
+ let token = ''
+ beforeEach(() => {
+    jest.resetAllMocks()
+ })
+ 
 
 describe("Tokens POST", () => {
     describe("Sent valid email", () => {
         it("Should return 201 and token", async () => {
+            token = sign({userId: "642486eb76ebc32a07efbde",})
             const mockTokenCreation = jest
                 .spyOn(client.user, "findUniqueOrThrow")
                 // @ts-ignore
@@ -20,7 +25,7 @@ describe("Tokens POST", () => {
                 .post("/tokens")
                 .send(emailInput)
             expect(statusCode).toBe(201)
-            expect(text).toEqual(token)
+            expect(text).toBe(token)
             // @ts-ignore
             expect(mockTokenCreation).toHaveBeenCalledWith({where: {email: emailInput.email}})
         })

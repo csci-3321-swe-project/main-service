@@ -2,7 +2,7 @@ import {describe, expect} from '@jest/globals'
 import createServer from '../src/utilities/server'
 import {sign} from '../src/utilities/tokens'
 import client from "../src/utilities/client"
-import {courseInput, coursePayload, invalidCourseInput, studentPayload, adminPayload, professorPayload, courseInfoPayload, courseId} from "./testVariables"
+import {courseInput, coursePayload, invalidCourseInput, studentPayload, adminPayload, professorPayload, courseInfoPayload, courseId, transactionPayload, courseSectionPayload, courseSectionInput} from "./testVariables"
 
 const request = require('supertest')
  const app = createServer()
@@ -10,6 +10,7 @@ const request = require('supertest')
  let token = ''
  beforeEach(async () => {
      token = sign({userId: "642486eb76ebc32a07efbde",})
+     jest.resetAllMocks()
  })
 
 describe("Testing course requests", () => {
@@ -142,7 +143,7 @@ describe("Testing course requests", () => {
                 })
             })
         })
-        describe("Sending no authorization", () =>{
+        describe("Sending with no authorization", () =>{
             it("Should return a 401", async ()=>{
                 const mockAuthorization = jest
                     .spyOn(client.user, "findUnique")
@@ -158,15 +159,192 @@ describe("Testing course requests", () => {
                 expect(mockCourseId).not.toHaveBeenCalled()
             })
          })
+         describe("Sending with invalid Course Id",() => {
+            it("Should return a 500", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockCourseId = jest
+                    .spyOn(client.course, "findUniqueOrThrow")
+                    // @ts-ignore
+                    .mockRejectedValueOnce("Invalid Course Id")
+                const {statusCode} = await request(app)
+                    .get(`/courses/1234efr4034`)
+                    .set('Authorization', `Bearer ${token}`)
+                expect(statusCode).toBe(500)
+                expect(mockCourseId).toHaveBeenCalled()
+            })
+         })
     })
     describe("CourseId PUT", () => {
-
+        describe("Sending with admin authorization, valid course Id, and valid course input", () => {
+            it("Should return a 200 and a course", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockUpdateCourse = jest
+                    .spyOn(client.course, "update")
+                    // @ts-ignore
+                    .mockReturnValueOnce(coursePayload)
+                const {statusCode, body} = await request(app)
+                    .put(`/courses/${courseId.courseId}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(courseInput)
+                expect(statusCode).toBe(200)
+                expect(body).toEqual(coursePayload)
+                expect(mockUpdateCourse).toHaveBeenCalledWith({
+                    where: { id: `${courseId.courseId}` },
+                    data: courseInput,
+                })
+            })
+        })
+        describe("Sending without admin authorization, valid course Id, and valid course input", () => {
+            it("Should return a 401", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(studentPayload)
+                const mockCourseId = jest
+                    .spyOn(client.course, "update")
+                    // @ts-ignore
+                    .mockReturnValueOnce(coursePayload)
+                const {statusCode} = await request(app)
+                    .put(`/courses/${courseId.courseId}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(courseInput)
+                expect(statusCode).toBe(401)
+                expect(mockCourseId).not.toHaveBeenCalled()
+            })
+        })
+        describe("Sending with admin authorization, valid course Id, and invalid course input", () => {
+            it("Should return a 500", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockCourseId = jest
+                    .spyOn(client.course, "update")
+                    // @ts-ignore
+                    .mockRejectedValueOnce("Invalid body")
+                const {statusCode} = await request(app)
+                    .put(`/courses/${courseId.courseId}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(invalidCourseInput)
+                expect(statusCode).toBe(500)
+                expect(mockCourseId).toHaveBeenCalled()
+            })
+        })
+        describe("Sending with admin authorization, invalid course Id, and valid course info", () => {
+            it("Should return a 500", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockCourseId = jest
+                    .spyOn(client.course, "update")
+                    // @ts-ignore
+                    .mockRejectedValueOnce("Invalid Course Id")
+                const {statusCode} = await request(app)
+                    .put(`/courses/1234eftin`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(invalidCourseInput)
+                expect(statusCode).toBe(500)
+                expect(mockCourseId).toHaveBeenCalled()
+            })
+        })
     })
     describe("CourseId DELETE", () => {
-
+        describe("Sending with admin authorization and valid course Id", () => {
+            it("Should return a 200 and a transaction", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockTransaction = jest
+                    .spyOn(client,"$transaction")
+                    // @ts-ignore
+                    .mockReturnValueOnce(transactionPayload)
+                const {statusCode, body} = await request(app)
+                    .delete(`/courses/${courseId.courseId}`)
+                    .set('Authorization', `Bearer ${token}`)
+                expect(statusCode).toBe(200)
+                expect(body).toEqual(transactionPayload)
+                expect(mockTransaction).toHaveBeenCalled()
+            })
+        })
+        describe("Sending without admin authorization and valid course Id", () => {
+            it("Should return a 401", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(studentPayload)
+                const mockTransaction = jest
+                    .spyOn(client,"$transaction")
+                    // @ts-ignore
+                    .mockReturnValueOnce(transactionPayload)
+                const {statusCode} = await request(app)
+                    .delete(`/courses/${courseId.courseId}`)
+                    .set('Authorization', `Bearer ${token}`)
+                expect(statusCode).toBe(401)
+                expect(mockTransaction).not.toHaveBeenCalled()
+            })
+        })
+        describe("Sending with admin authorization and invalid course Id", () => {
+            it("Should return a 500", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockTransaction = jest
+                    .spyOn(client,"$transaction")
+                    // @ts-ignore
+                    .mockRejectedValueOnce("Invalid Course Id")
+                const {statusCode} = await request(app)
+                    .delete(`/courses/1234fjdnep`)
+                    .set('Authorization', `Bearer ${token}`)
+                expect(statusCode).toBe(500)
+                expect(mockTransaction).toHaveBeenCalled()
+            })
+        })
     })
     describe("Sections POST", () => {
-
+        describe("Sending with admin authorization and valid section input", () => {
+            it("Should return a 201 and the created section", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockSectionCreation = jest
+                    .spyOn(client.courseSection, "create")
+                    // @ts-ignore
+                    .mockReturnValueOnce(courseSectionPayload)
+                const {statusCode, body} = await request(app)
+                    .post(`/courses/${courseId.courseId}/sections`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(courseSectionInput)
+                expect(statusCode).toBe(201)
+                expect(body).toEqual(courseSectionPayload)
+                expect(mockSectionCreation).toHaveBeenLastCalledWith({
+                    data: {
+                        courseId: `${courseId.courseId}`,
+                        meetings: [
+                            {
+                                daysOfWeek: [
+                                    "TUESDAY",
+                                    "THURSDAY"
+                                ],
+                                startTime: "12:30:00",
+                                endTime: "13:30:00",
+                                location: "CSI-388"
+                            }
+                        ],
+                        instructorIds: ["641a06db480e1fb9a4cdaad1"],
+                    }
+                })
+            })
+        })
     })
     describe("SectionId GET", () => {
 
