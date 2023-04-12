@@ -75,7 +75,10 @@ export const coursePayload = {
 
 export const courseId = {courseId: 3321}
 
+export const sectionId = {id: "4423"}
+
 export const courseSection = {
+    sectionId,
     courseId,
     meetings: [
         {
@@ -163,10 +166,15 @@ export const registrationDeletionBatch = {count : 4}
 
 export const courseSectionDeletionBatch = {count : 2}
 
-export const transactionPayload = [
+export const courseDeletionTransactionPayload = [
     registrationDeletionBatch,
     courseSectionDeletionBatch,
     coursePayload,
+]
+
+export const sectionDeletionTransactionPayload = [
+    registrationDeletionBatch,
+    courseSectionDeletionBatch,
 ]
 
 export const emailQuery = "email=example@email.com"

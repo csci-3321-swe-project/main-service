@@ -2,7 +2,7 @@ import {describe, expect} from '@jest/globals'
 import createServer from '../src/utilities/server'
 import {sign} from '../src/utilities/tokens'
 import client from "../src/utilities/client"
-import {courseInput, coursePayload, invalidCourseInput, studentPayload, adminPayload, professorPayload, courseInfoPayload, courseId, transactionPayload, courseSectionPayload, courseSectionInput, invalidCourseSectionInput, courseSectionInputWithInvalidTimeRange} from "./testVariables"
+import {courseInput, coursePayload, invalidCourseInput, studentPayload, adminPayload, professorPayload, courseInfoPayload, courseId, courseDeletionTransactionPayload, courseSectionPayload, courseSectionInput, invalidCourseSectionInput, courseSectionInputWithInvalidTimeRange, sectionId, sectionDeletionTransactionPayload} from "./testVariables"
 
 const request = require('supertest')
  const app = createServer()
@@ -265,12 +265,12 @@ describe("Testing course requests", () => {
                 const mockTransaction = jest
                     .spyOn(client,"$transaction")
                     // @ts-ignore
-                    .mockReturnValueOnce(transactionPayload)
+                    .mockReturnValueOnce(courseDeletionTransactionPayload)
                 const {statusCode, body} = await request(app)
                     .delete(`/courses/${courseId.courseId}`)
                     .set('Authorization', `Bearer ${token}`)
                 expect(statusCode).toBe(200)
-                expect(body).toEqual(transactionPayload)
+                expect(body).toEqual(courseDeletionTransactionPayload)
                 expect(mockTransaction).toHaveBeenCalled()
             })
         })
@@ -283,7 +283,7 @@ describe("Testing course requests", () => {
                 const mockTransaction = jest
                     .spyOn(client,"$transaction")
                     // @ts-ignore
-                    .mockReturnValueOnce(transactionPayload)
+                    .mockReturnValueOnce(courseDeletionTransactionPayload)
                 const {statusCode} = await request(app)
                     .delete(`/courses/${courseId.courseId}`)
                     .set('Authorization', `Bearer ${token}`)
@@ -401,13 +401,140 @@ describe("Testing course requests", () => {
         })
     })
     describe("SectionId GET", () => {
-
+        describe("Sending with admin authorization and valid section id", () => {
+            it("Should return a 200 and the section", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockSectionRetrieval = jest
+                    .spyOn(client.courseSection, "findUniqueOrThrow")
+                    // @ts-ignore
+                    .mockReturnValueOnce(courseSectionPayload)
+                const {statusCode, body} = await request(app)
+                    .get(`/courses/${courseId.courseId}/sections/${sectionId.id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                expect(statusCode).toBe(200)
+                expect(body).toEqual(courseSectionPayload)
+                expect(mockSectionRetrieval).toHaveBeenCalledWith({
+                    where: sectionId,
+                    include: { instructors: true, course: true },
+                })
+            })
+        })
+        describe("Sending without admin authorization and valid section id", () => {
+            it("Should return a 401", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(studentPayload)
+                const mockSectionRetrieval = jest
+                    .spyOn(client.courseSection, "findUniqueOrThrow")
+                    // @ts-ignore
+                    .mockReturnValueOnce(courseSectionPayload)
+                const {statusCode} = await request(app)
+                    .get(`/courses/${courseId.courseId}/sections/${sectionId.id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                expect(statusCode).toBe(401)
+                expect(mockSectionRetrieval).not.toHaveBeenCalled()
+            })
+        })
+        describe("Sending with admin authorization and invalid section id", () => {
+            it("Should return a 500", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockSectionRetrieval = jest
+                    .spyOn(client.courseSection, "findUniqueOrThrow")
+                    // @ts-ignore
+                    .mockRejectedValueOnce("Invalid Section Id")
+                const {statusCode} = await request(app)
+                    .get(`/courses/${courseId.courseId}/sections/12345gdjg`)
+                    .set('Authorization', `Bearer ${token}`)
+                expect(statusCode).toBe(500)
+                expect(mockSectionRetrieval).toHaveBeenCalled()
+            })
+        })
     })
     describe("SectionId DELETE", () => {
-
+        describe("Sending with admin authorization and valid section id", () => {
+            it("Should return a 200 and a transaction", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockTransaction = jest
+                    .spyOn(client, "$transaction")
+                    // @ts-ignore
+                    .mockReturnValue(sectionDeletionTransactionPayload)
+                const {statusCode, body} = await request(app)
+                    .delete(`/courses/${courseId.courseId}/sections/${sectionId.id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                expect(statusCode).toBe(200)
+                expect(body).toEqual(sectionDeletionTransactionPayload)
+                expect(mockTransaction).toHaveBeenCalled()
+            })
+        })
+        describe("Sending without admin authorization and valid section id", () => {
+            it("Should return a 401", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(studentPayload)
+                const mockTransaction = jest
+                    .spyOn(client, "$transaction")
+                    // @ts-ignore
+                    .mockReturnValue(sectionDeletionTransactionPayload)
+                const {statusCode} = await request(app)
+                    .delete(`/courses/${courseId.courseId}/sections/${sectionId.id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                expect(statusCode).toBe(401)
+                expect(mockTransaction).not.toHaveBeenCalled()
+            })
+        })
+        describe("Sending with admin authorization and invalid section id", () => {
+            it("Should return a 500", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockTransaction = jest
+                    .spyOn(client, "$transaction")
+                    // @ts-ignore
+                    .mockRejectedValue("Invalid Section Id")
+                const {statusCode} = await request(app)
+                    .delete(`/courses/${courseId.courseId}/sections/${sectionId.id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                expect(statusCode).toBe(500)
+                expect(mockTransaction).toHaveBeenCalled()
+            })
+        })
     })
     describe("SectionId PUT", () => {
-
+        describe("Sending with admin authorization, valid section id, and valid section info", () => {
+            it("Should return a 200 and the updated section", async () =>{
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockSectionUpdate = jest
+                    .spyOn(client.courseSection, "update")
+                    // @ts-ignore
+                    .mockReturnValueOnce(courseSectionPayload)
+                const {statusCode, body} = await request(app)
+                    .put(`/courses/${courseId.courseId}/sections/${sectionId.id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(courseSectionInput)
+                expect(statusCode).toBe(201)
+                expect(body).toEqual(courseSectionPayload)
+                expect(mockSectionUpdate).toHaveBeenCalledWith({
+                    where: sectionId,
+                    data: courseSectionInput,
+                })
+            })
+        })
+        //Continue Here for testing Future Garrett
     })
     describe("Registrations GET", () => {
 
