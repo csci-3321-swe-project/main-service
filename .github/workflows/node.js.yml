@@ -27,7 +27,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: yarn
       - name: "Running Unit Tests"
         run: yarn test
         env:
