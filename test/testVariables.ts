@@ -116,6 +116,35 @@ export const courseSectionInput = {
     instructorIds: ["641a06db480e1fb9a4cdaad1"],
 }
 
+export const invalidCourseSectionInput = {
+    meetings: [
+        {
+            daysOfWeek: [
+                "TUESDAY",
+                "THURSDAY"
+            ],
+            startTime: "12:30:00",
+            endTime: "13:30:00",
+            location: "CSI-388"
+        }
+    ],
+}
+
+export const courseSectionInputWithInvalidTimeRange = {
+    meetings: [
+        {
+            daysOfWeek: [
+                "TUESDAY",
+                "THURSDAY"
+            ],
+            startTime: "12:30:00",
+            endTime: "11:30:00",
+            location: "CSI-388"
+        }
+    ],
+    instructorIds: ["641a06db480e1fb9a4cdaad1"],
+}
+
 export const courseSectionPayload = {
     courseSection,
     course: coursePayload

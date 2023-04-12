@@ -2,7 +2,7 @@ import {describe, expect} from '@jest/globals'
 import createServer from '../src/utilities/server'
 import {sign} from '../src/utilities/tokens'
 import client from "../src/utilities/client"
-import {courseInput, coursePayload, invalidCourseInput, studentPayload, adminPayload, professorPayload, courseInfoPayload, courseId, transactionPayload, courseSectionPayload, courseSectionInput} from "./testVariables"
+import {courseInput, coursePayload, invalidCourseInput, studentPayload, adminPayload, professorPayload, courseInfoPayload, courseId, transactionPayload, courseSectionPayload, courseSectionInput, invalidCourseSectionInput, courseSectionInputWithInvalidTimeRange} from "./testVariables"
 
 const request = require('supertest')
  const app = createServer()
@@ -343,6 +343,60 @@ describe("Testing course requests", () => {
                         instructorIds: ["641a06db480e1fb9a4cdaad1"],
                     }
                 })
+            })
+        })
+        describe("Sending without admin authorization and valid section input", () => {
+            it("Should return a 401", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(studentPayload)
+                const mockSectionCreation = jest
+                    .spyOn(client.courseSection, "create")
+                    // @ts-ignore
+                    .mockReturnValueOnce(courseSectionPayload)
+                const {statusCode} = await request(app)
+                    .post(`/courses/${courseId.courseId}/sections`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(courseSectionInput)
+                expect(statusCode).toBe(401)
+                expect(mockSectionCreation).not.toHaveBeenCalled()
+            })
+        })
+        describe("Sending with admin authorization and invalid section input", () => {
+            it('Should return a 400', async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockSectionCreation = jest
+                    .spyOn(client.courseSection, "create")
+                    // @ts-ignore
+                    .mockRejectedValueOnce("Invalid Course Info")
+                const {statusCode} = await request(app)
+                    .post(`/courses/${courseId.courseId}/sections`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(invalidCourseSectionInput)
+                expect(statusCode).toBe(400)
+                expect(mockSectionCreation).not.toHaveBeenCalled()
+            })
+        })
+        describe("Sending with admin authorization and invalid time range in section input", () =>{
+            it("Should return a 400", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockSectionCreation = jest
+                    .spyOn(client.courseSection, "create")
+                    // @ts-ignore
+                    .mockRejectedValueOnce("Invalid Course Info")
+                const {statusCode} = await request(app)
+                    .post(`/courses/${courseId.courseId}/sections`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(courseSectionInputWithInvalidTimeRange)
+                expect(statusCode).toBe(400)
+                expect(mockSectionCreation).not.toHaveBeenCalled()
             })
         })
     })
