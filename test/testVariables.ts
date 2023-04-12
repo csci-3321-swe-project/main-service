@@ -6,6 +6,8 @@ export const userInput = {
     role: "ADMINISTRATOR",
 }
 
+export const userId = {userId: "642486eb76ebc32a07efbde",}
+
 export const adminPayload = {
     id:"642486eb76ebc32a07efbde",
     isMock: true,
@@ -162,6 +164,8 @@ export const emailInput = {
     email: "example@email.com"
 }
 
+export const invalidSectionRegistrationBatchPayload = {count: 0}
+
 export const registrationDeletionBatch = {count : 4}
 
 export const courseSectionDeletionBatch = {count : 2}
@@ -175,6 +179,20 @@ export const courseDeletionTransactionPayload = [
 export const sectionDeletionTransactionPayload = [
     registrationDeletionBatch,
     courseSectionDeletionBatch,
+]
+
+export const registrationPayload = {
+    id: "1234",
+    userId: "5678",
+    courseSectionId: sectionId.id,
+    user: {
+        ...studentPayload,
+        instuctingIds: []
+    }
+}
+
+export const registrationListPayload = [
+    registrationPayload
 ]
 
 export const emailQuery = "email=example@email.com"
