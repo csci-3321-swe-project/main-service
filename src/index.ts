@@ -6,6 +6,7 @@ import courses from "./routes/courses";
 import options from "./routes/options";
 import tokens from "./routes/tokens";
 import users from "./routes/users";
+import terms from "./routes/terms";
 import environment from "./utilities/environment";
 
 const app = express();
@@ -21,6 +22,7 @@ app.use("/account", account);
 app.use("/users", users);
 app.use("/tokens", tokens);
 app.use("/options", options);
+app.use("/terms", terms);
 
 // Error Handlers
 app.use(errorHandler);
