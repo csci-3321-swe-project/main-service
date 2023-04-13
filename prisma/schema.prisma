@@ -57,8 +57,19 @@ model User {
   firstName      String
   lastName       String
   registrations  Registration[]
+
   instructing    CourseSection[] @relation(name: "instructors", fields: [instructingIds], references: [id])
   instructingIds String[]        @db.ObjectId
+  
+  coursesCreated Course[]        @relation(name: "createdBy")
+  coursesUpdated Course[]        @relation(name: "updatedBy", fields: [updatedIds], references: [id])
+  updatedIds     String[]        @db.ObjectId
+  secCreated     CourseSection[] @relation(name: "sectionCreatedBy")
+  secUpdated     CourseSection[] @relation(name: "sectionUpdatedByUsers", fields: [secUpdatedIds], references: [id])
+  secUpdatedIds  String[]     @db.ObjectId
+  //reg test
+  usersReged     Registration[]        @relation(name: "registeredBy")
+  
 }
 
 model Registration {
@@ -69,8 +80,11 @@ model Registration {
   courseSectionId String        @db.ObjectId
   createdAt       DateTime      @default(now())
   priority        Boolean       @default(false)
-
   @@unique([userId, courseSectionId])
+  //Auditing - regtest
+  registeredBy      User            @relation(name: "registeredBy", fields: [registeredById], references: [id])
+  registeredById    String          @db.ObjectId
+  registeredOn      String
 }
 
 model Course {
@@ -82,6 +96,14 @@ model Course {
   code           Int
   description    String
   courseSections CourseSection[]
+  //Auditing  -  Creation
+  createdBy      User            @relation(name: "createdBy", fields: [createdById], references: [id])
+  createdById    String          @db.ObjectId
+  createdOn      String
+  //Auditing  -  Updates
+  updatedByUsers User[]          @relation(name: "updatedBy", fields: [updatedByIds], references: [id])
+  updatedByIds   String[]        @db.ObjectId
+  updatedOnTimes String[]
 }
 
 type Meeting {
@@ -100,6 +122,14 @@ model CourseSection {
   instructorIds String[]       @db.ObjectId
   registrations Registration[]
   capacity      Int
+  // //Auditing  -  creations
+  sectionCreatedBy      User            @relation(name: "sectionCreatedBy", fields: [sectionCreatedById], references: [id])
+  sectionCreatedById    String          @db.ObjectId
+  sectionCreatedOn      String
+  // //Auditing  -  updates
+  sectionUpdatedByUsers User[]          @relation(name: "sectionUpdatedByUsers", fields: [sectionUpdatedByIds], references: [id])
+  sectionUpdatedByIds   String[]        @db.ObjectId
+  sectionUpdatedOnTimes String[]
 }
 
 model Term {

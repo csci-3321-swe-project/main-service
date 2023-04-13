@@ -6,6 +6,7 @@ import client from "../utilities/client";
 import queryArrayParam from "../utilities/query-param";
 import { TimeRange } from "../utilities/time-range";
 
+
 const router = Router();
 
 router.get(
@@ -50,6 +51,7 @@ router.get(
   }
 );
 
+// Create Course
 router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   const schema = z.object({
     name: z.string(),
@@ -58,10 +60,17 @@ router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
     code: z.number(),
     description: z.string(),
   });
-
+  const currentTime = (new Date()).toString()
   try {
     const body = schema.parse(req.body);
-    const newCourse = await client.course.create({ data: body });
+    const newCourse = await client.course.create({ data: {
+      createdById: res.locals.user.id,
+      createdOn: currentTime,
+      updatedByIds: [res.locals.user.id],
+      updatedOnTimes: [currentTime],
+      ...body 
+    }
+    });
 
     res.status(201).send(newCourse);
   } catch (err) {
@@ -69,6 +78,7 @@ router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   }
 });
 
+// Get Course
 router.get(
   "/:courseId",
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
@@ -89,6 +99,7 @@ router.get(
   }
 );
 
+// Update Course
 router.put(
   "/:courseId",
   authorize(["ADMINISTRATOR"]),
@@ -101,11 +112,20 @@ router.put(
       description: z.optional(z.string()),
     });
 
+    const currentTime = (new Date()).toString()
     try {
       const body = schema.parse(req.body);
       const updatedCourse = await client.course.update({
         where: { id: req.params.courseId },
-        data: body,
+        data: {
+          updatedByIds: {
+            push: res.locals.user.id
+          },
+          updatedOnTimes: {
+            push: currentTime
+          },
+          ...body
+        }
       });
 
       res.status(200).send(updatedCourse);
@@ -115,6 +135,7 @@ router.put(
   }
 );
 
+// Delete Course
 router.delete(
   "/:courseId",
   authorize(["ADMINISTRATOR"]),
@@ -143,6 +164,7 @@ router.delete(
   }
 );
 
+// Create Course Section 
 router.post(
   "/:courseId/sections",
   authorize(["ADMINISTRATOR"]),
@@ -161,7 +183,7 @@ router.post(
         )
         .nonempty(),
     });
-
+    const currentTime = (new Date()).toString()
     try {
       const body = schema.parse(req.body);
 
@@ -176,6 +198,11 @@ router.post(
       const newCourseSection = await client.courseSection.create({
         data: {
           courseId: req.params.courseId,
+          //Course Section Audit attributes
+          sectionCreatedById: res.locals.user.id,
+          sectionCreatedOn: currentTime,
+          sectionUpdatedByIds: [res.locals.user.id],
+          sectionUpdatedOnTimes: [currentTime],
           ...body,
         },
       });
@@ -187,6 +214,7 @@ router.post(
   }
 );
 
+// Get Course Section
 router.get(
   "/:courseId/sections/:sectionId",
   authorize(["ADMINISTRATOR"]),
@@ -204,6 +232,7 @@ router.get(
   }
 );
 
+// Delete Course Section
 router.delete(
   "/:courseId/sections/:sectionId",
   authorize(["ADMINISTRATOR"]),
@@ -227,6 +256,7 @@ router.delete(
   }
 );
 
+// Update Course Section
 router.put(
   "/:courseId/sections/:sectionId",
   authorize(["ADMINISTRATOR"]),
@@ -245,10 +275,8 @@ router.put(
         )
         .nonempty(),
     });
-
     try {
       const body = schema.parse(req.body);
-
       // Check that end time is after start time
       for (const meeting of body.meetings) {
         if (!new TimeRange({ ...meeting }).isValid) {
@@ -256,10 +284,16 @@ router.put(
           return;
         }
       }
-
+      const currentTime = (new Date()).toString()
       const updatedCourseSection = await client.courseSection.update({
         where: { id: req.params.sectionId },
         data: {
+          sectionUpdatedByIds: {
+            push: res.locals.user.id
+          },
+          sectionUpdatedOnTimes: {
+            push: currentTime,
+          },
           ...body,
         },
       });
@@ -271,6 +305,7 @@ router.put(
   }
 );
 
+// Get Registrations
 router.get(
   "/:courseId/sections/:sectionId/roster",
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
@@ -299,6 +334,7 @@ router.get(
   }
 );
 
+// Create Registration
 router.post(
   "/:courseId/sections/:sectionId/registrations",
   authorize(["STUDENT", "PROFESSOR", "ADMINISTRATOR"]),
@@ -321,11 +357,13 @@ router.post(
         res.sendStatus(400);
         return;
       }
-
+      const currentTime = (new Date()).toString()
       const newRegistration = await client.registration.create({
         data: {
           courseSectionId,
           userId,
+          registeredById: res.locals.user.id,
+          registeredOn: currentTime,
         },
         include: { user: true },
       });
@@ -362,6 +400,7 @@ router.put(
     }
   }
 );
+// Delete Registrations
 
 router.delete(
   "/:courseId/sections/:sectionId/registrations",

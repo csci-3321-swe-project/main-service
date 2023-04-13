@@ -28,6 +28,9 @@ const authorize = (roles: Role[]) => {
       where: { id: payload.userId },
     });
 
+    
+
+
     if (!user) {
       res.sendStatus(401);
       return;
