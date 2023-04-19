@@ -1,3 +1,4 @@
+import { updateTaggedTemplate } from "typescript"
 
 export const userInput = {
     email: "example@email.com",
@@ -320,11 +321,45 @@ export const optionsPayload = {
     ]
 }
 
+
+const currentDate = new Date();
+const yearBefore = currentDate.setFullYear(currentDate.getFullYear() - 1)
+const yearAfter = currentDate.setFullYear(currentDate.getFullYear() + 1)
+
+export const termId = {id: "12434gretbhteyrht"}
+
+export const termInput = {
+    season: "FALL",
+    year: 2023,
+    startTime: yearBefore,
+    endTime: yearAfter,
+}
+
+export const termInputWithInvalidDates = {
+    season: "FALL",
+    year: 2023,
+    startTime: yearAfter,
+    endTime: yearBefore,
+}
+
+export const invalidTermInput = {
+    season: "FALL"
+}
+
 export const termPayload = {
-    id: "12434gretbhteyrht",        
+    id: termId.id,        
     season: "FALL",
     year: 2023,
     startTime: "Apr 20 2023",
     endTime: "Apr 20 2024",
     courses: []
-  }
+}
+
+export const currentTermPayload = {
+    id: "12434gretbhteyrht",        
+    season: "FALL",
+    year: 2023,
+    startTime: yearBefore,
+    endTime: yearAfter,
+    courses: []
+}

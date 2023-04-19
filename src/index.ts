@@ -10,24 +10,9 @@ import users from "./routes/users";
 import terms from "./routes/terms";
 import environment from "./utilities/environment";
 
+// Creating server
 const app = createServer()
 const port = environment.PORT;
-
-
-// Middleware
-app.use(express.json());
-app.use(cors());
-
-// Routes
-app.use("/courses", courses);
-app.use("/account", account);
-app.use("/users", users);
-app.use("/tokens", tokens);
-app.use("/options", options);
-app.use("/terms", terms);
-
-// Error Handlers
-app.use(errorHandler);
 
 // Listening
 app.listen(port, () => {

@@ -6,7 +6,9 @@ import courses from "../routes/courses";
 import options from "../routes/options";
 import tokens from "../routes/tokens";
 import users from "../routes/users";
+import terms from "../routes/terms"
 
+// Creates a server instance
 function createServer(){
     const app = express();
 
@@ -20,6 +22,7 @@ function createServer(){
     app.use("/users", users);
     app.use("/tokens", tokens);
     app.use("/options", options);
+    app.use("/terms", terms);
 
     // Error Handlers
     app.use(errorHandler);
