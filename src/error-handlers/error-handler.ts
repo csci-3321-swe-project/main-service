@@ -7,7 +7,7 @@ import { ZodError } from "zod";
 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   // Log error for visibility
-  console.error(err);
+  // console.error(err);
 
   // Handle input validation errors
   if (err instanceof ZodError) {

@@ -198,6 +198,7 @@ router.post(
       const newCourseSection = await client.courseSection.create({
         data: {
           courseId: req.params.courseId,
+          
           //Course Section Audit attributes
           sectionCreatedById: res.locals.user.id,
           sectionCreatedOn: currentTime,
