@@ -13,6 +13,7 @@ enum Role {
   ADMINISTRATOR
 }
 
+// TODO: Make this editable by administrators.
 enum Department {
   ART_HISTORY
   BIOLOGY
@@ -43,12 +44,9 @@ enum DayOfWeek {
   SUNDAY
 }
 
-enum Term {
-  SPRING_2021
-  FALL_2021
-  SPRING_2022
-  FALL_2022
-  SPRING_2023
+enum Season {
+  FALL
+  SPRING
 }
 
 model User {
@@ -59,8 +57,19 @@ model User {
   firstName      String
   lastName       String
   registrations  Registration[]
+
   instructing    CourseSection[] @relation(name: "instructors", fields: [instructingIds], references: [id])
   instructingIds String[]        @db.ObjectId
+  
+  coursesCreated Course[]        @relation(name: "createdBy")
+  coursesUpdated Course[]        @relation(name: "updatedBy", fields: [updatedIds], references: [id])
+  updatedIds     String[]        @db.ObjectId
+  secCreated     CourseSection[] @relation(name: "sectionCreatedBy")
+  secUpdated     CourseSection[] @relation(name: "sectionUpdatedByUsers", fields: [secUpdatedIds], references: [id])
+  secUpdatedIds  String[]     @db.ObjectId
+  //reg test
+  usersReged     Registration[]        @relation(name: "registeredBy")
+  
 }
 
 model Registration {
@@ -69,18 +78,32 @@ model Registration {
   userId          String        @db.ObjectId
   courseSection   CourseSection @relation(fields: [courseSectionId], references: [id])
   courseSectionId String        @db.ObjectId
-
+  createdAt       DateTime      @default(now())
+  priority        Boolean       @default(false)
   @@unique([userId, courseSectionId])
+  //Auditing - regtest
+  registeredBy      User            @relation(name: "registeredBy", fields: [registeredById], references: [id])
+  registeredById    String          @db.ObjectId
+  registeredOn      String
 }
 
 model Course {
   id             String          @id @default(auto()) @map("_id") @db.ObjectId
   name           String
-  term           Term
+  term           Term            @relation(fields: [termId], references: [id])
+  termId         String          @db.ObjectId
   department     Department
   code           Int
   description    String
   courseSections CourseSection[]
+  //Auditing  -  Creation
+  createdBy      User            @relation(name: "createdBy", fields: [createdById], references: [id])
+  createdById    String          @db.ObjectId
+  createdOn      String
+  //Auditing  -  Updates
+  updatedByUsers User[]          @relation(name: "updatedBy", fields: [updatedByIds], references: [id])
+  updatedByIds   String[]        @db.ObjectId
+  updatedOnTimes String[]
 }
 
 type Meeting {
@@ -98,4 +121,22 @@ model CourseSection {
   instructors   User[]         @relation(name: "instructors", fields: [instructorIds], references: [id])
   instructorIds String[]       @db.ObjectId
   registrations Registration[]
+  capacity      Int
+  // //Auditing  -  creations
+  sectionCreatedBy      User            @relation(name: "sectionCreatedBy", fields: [sectionCreatedById], references: [id])
+  sectionCreatedById    String          @db.ObjectId
+  sectionCreatedOn      String
+  // //Auditing  -  updates
+  sectionUpdatedByUsers User[]          @relation(name: "sectionUpdatedByUsers", fields: [sectionUpdatedByIds], references: [id])
+  sectionUpdatedByIds   String[]        @db.ObjectId
+  sectionUpdatedOnTimes String[]
+}
+
+model Term {
+  id           String          @id @default(auto()) @map("_id") @db.ObjectId
+  season       Season
+  year         Int
+  startTime    DateTime
+  endTime      DateTime
+  courses      Course[]
 }
