@@ -3,9 +3,6 @@ import createServer from '../src/utilities/server'
 import {sign} from '../src/utilities/tokens'
 import client from "../src/utilities/client"
 import {courseInput, coursePayload, invalidCourseInput, studentPayload, adminPayload, professorPayload, courseInfoPayload, courseId, courseDeletionTransactionPayload, courseSectionPayload, courseSectionInput, invalidCourseSectionInput, courseSectionInputWithInvalidTimeRange, sectionId, sectionDeletionTransactionPayload, courseSection, registrationPayload, registrationListPayload, userInput, userId, registrationDeletionBatch, invalidSectionRegistrationBatchPayload} from "./testVariables"
-import { userInfo } from 'os'
-import { stat } from 'fs'
-import exp from 'constants'
 
 const request = require('supertest')
 const app = createServer()

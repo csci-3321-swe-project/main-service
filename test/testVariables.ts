@@ -308,26 +308,23 @@ export const optionsPayload = {
             value: "SUNDAY"
         }
     ],
-    terms: [
+    seasons: [
         {
-            name: "Spring 2021",
-            value: "SPRING_2021"
+            name: "Fall",
+            value: "FALL"
         },
         {
-            name: "Fall 2021",
-            value: "FALL_2021"
+            name: "Spring",
+            value: "SPRING"
         },
-        {
-            name: "Spring 2022",
-            value: "SPRING_2022"
-        },
-        {
-            name: "Fall 2022",
-            value: "FALL_2022"
-        },
-        {
-            name: "Spring 2023",
-            value: "SPRING_2023"
-        }
     ]
 }
+
+export const termPayload = {
+    id: "12434gretbhteyrht",        
+    season: "FALL",
+    year: 2023,
+    startTime: "Apr 20 2023",
+    endTime: "Apr 20 2024",
+    courses: []
+  }
