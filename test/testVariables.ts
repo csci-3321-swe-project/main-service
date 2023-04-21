@@ -59,9 +59,11 @@ export const invalRoleUserPayload = {
     instructingIds: [],
 }
 
+export const termId = {id: "12434gretbhteyrht"}
+
 export const courseInput = {
     name: "Software Engineering",
-    term: "SPRING_2022",
+    termId: termId.id,
     department: "COMPUTER_SCIENCE",
     code: 3321,
     description: "A great time",
@@ -76,6 +78,14 @@ export const coursePayload = {
     description: "A great time",
 }
 
+export const parsedCourseQuery = {
+    q: ["Software Engineering"],
+    termId: "64248ad776ebc32a873efdc0",
+    dept: "COMPUTER_SCIENCE"
+}
+
+export const courseQuery = "q=Software Engineering&termId=64248ad776ebc32a873efdc0&dept=COMPUTER_SCIENCE"
+
 export const courseId = {courseId: 3321}
 
 export const sectionId = {id: "4423"}
@@ -83,6 +93,7 @@ export const sectionId = {id: "4423"}
 export const courseSection = {
     sectionId,
     courseId,
+    capacity: 22,
     meetings: [
         {
             daysOfWeek: [
@@ -108,6 +119,8 @@ export const courseInfoPayload = {
 }
 
 export const courseSectionInput = {
+    instructorIds: ["641a06db480e1fb9a4cdaad1"],
+    capacity: 22,
     meetings: [
         {
             daysOfWeek: [
@@ -119,7 +132,6 @@ export const courseSectionInput = {
             location: "CSI-388"
         }
     ],
-    instructorIds: ["641a06db480e1fb9a4cdaad1"],
 }
 
 export const invalidCourseSectionInput = {
@@ -326,8 +338,6 @@ const currentDate = new Date();
 const yearBefore = currentDate.setFullYear(currentDate.getFullYear() - 1)
 const yearAfter = currentDate.setFullYear(currentDate.getFullYear() + 1)
 
-export const termId = {id: "12434gretbhteyrht"}
-
 export const termInput = {
     season: "FALL",
     year: 2023,
@@ -352,6 +362,15 @@ export const termPayload = {
     year: 2023,
     startTime: "Apr 20 2023",
     endTime: "Apr 20 2024",
+    courses: []
+}
+
+export const updatedTermPayload = {
+    id: termId.id,        
+    season: "FALL",
+    year: 2023,
+    startTime: yearBefore,
+    endTime: yearAfter,
     courses: []
 }
 

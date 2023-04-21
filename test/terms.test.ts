@@ -2,7 +2,7 @@ import {describe, expect} from '@jest/globals'
 import createServer from '../src/utilities/server'
 import {sign} from '../src/utilities/tokens'
 import client from '../src/utilities/client'
-import { adminPayload, currentTermPayload, invalidTermInput, professorPayload, studentPayload, termId, termInput, termInputWithInvalidDates, termPayload, userId } from './testVariables'
+import { adminPayload, currentTermPayload, invalidTermInput, professorPayload, studentPayload, termId, termInput, termInputWithInvalidDates, termPayload, updatedTermPayload, userId } from './testVariables'
 
 const request = require('supertest')
 const app = createServer()
@@ -348,10 +348,241 @@ describe("Testing term requests", () => {
             })
         })
     })
-    describe("Term PUT", () => {
-
+    describe("TermId PUT", () => {
+        describe("Sending with admin authorization and valid term input", () => {
+            it("Should return a 200 and the updated term", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockTerm = jest
+                    .spyOn(client.term, "findUniqueOrThrow")
+                    // @ts-ignore
+                    .mockReturnValueOnce(termPayload)
+                const mockConflicts = jest
+                    .spyOn(client.term, "findMany")
+                    // @ts-ignore
+                    .mockReturnValueOnce([])
+                const mockUpdate = jest
+                    .spyOn(client.term, "update")
+                    // @ts-ignore
+                    .mockReturnValue(updatedTermPayload)
+                const {statusCode, body} = await request(app)
+                    .put(`/terms/${termId.id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(termInput)
+                expect(statusCode).toBe(200)
+                expect(body).toEqual(updatedTermPayload)
+                expect(mockTerm).toHaveBeenCalledWith({
+                    where: termId
+                })
+                expect(mockConflicts).toHaveBeenCalled()
+                expect(mockUpdate).toHaveBeenCalled()
+            })
+        })
+        describe("Sending with non admin authorization and valid term input", () => {
+            it("Should return a 401", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(studentPayload)
+                const mockTerm = jest
+                    .spyOn(client.term, "findUniqueOrThrow")
+                    // @ts-ignore
+                    .mockReturnValueOnce(termPayload)
+                const mockConflicts = jest
+                    .spyOn(client.term, "findMany")
+                    // @ts-ignore
+                    .mockReturnValueOnce([])
+                const mockUpdate = jest
+                    .spyOn(client.term, "update")
+                    // @ts-ignore
+                    .mockReturnValue(updatedTermPayload)
+                const {statusCode} = await request(app)
+                    .put(`/terms/${termId.id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(termInput)
+                expect(statusCode).toBe(401)
+                expect(mockTerm).not.toHaveBeenCalled()
+                expect(mockConflicts).not.toHaveBeenCalled()
+                expect(mockUpdate).not.toHaveBeenCalled()
+            })
+        })
+        describe("Sending with admin authorization and invalid term input", () => {
+            it("Should return a 400", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockTerm = jest
+                    .spyOn(client.term, "findUniqueOrThrow")
+                    // @ts-ignore
+                    .mockReturnValueOnce(termPayload)
+                const mockConflicts = jest
+                    .spyOn(client.term, "findMany")
+                    // @ts-ignore
+                    .mockReturnValueOnce([])
+                const mockUpdate = jest
+                    .spyOn(client.term, "update")
+                    // @ts-ignore
+                    .mockReturnValue(updatedTermPayload)
+                const {statusCode} = await request(app)
+                    .put(`/terms/${termId.id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(invalidTermInput)
+                expect(statusCode).toBe(400)
+                expect(mockTerm).not.toHaveBeenCalled()
+                expect(mockConflicts).not.toHaveBeenCalled()
+                expect(mockUpdate).not.toHaveBeenCalled()
+            })
+        })
+        describe("Sending with admin authorization, valid term input, but there exists a conflict", () => {
+            it("Should return a 400", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockTerm = jest
+                    .spyOn(client.term, "findUniqueOrThrow")
+                    // @ts-ignore
+                    .mockReturnValueOnce(termPayload)
+                const mockConflicts = jest
+                    .spyOn(client.term, "findMany")
+                    // @ts-ignore
+                    .mockReturnValueOnce([termPayload])
+                const mockUpdate = jest
+                    .spyOn(client.term, "update")
+                    // @ts-ignore
+                    .mockReturnValue(updatedTermPayload)
+                const {statusCode} = await request(app)
+                    .put(`/terms/${termId.id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(termInput)
+                expect(statusCode).toBe(400)
+                expect(mockTerm).toHaveBeenCalledWith({
+                    where: termId
+                })
+                expect(mockConflicts).toHaveBeenCalled()
+                expect(mockUpdate).not.toHaveBeenCalled()
+            })
+        })
+        describe("Sending with admin authorization and term input with an end date before the start date", () => {
+            it("Should return a 400", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockTerm = jest
+                    .spyOn(client.term, "findUniqueOrThrow")
+                    // @ts-ignore
+                    .mockReturnValueOnce(termPayload)
+                const mockConflicts = jest
+                    .spyOn(client.term, "findMany")
+                    // @ts-ignore
+                    .mockReturnValueOnce([])
+                const mockUpdate = jest
+                    .spyOn(client.term, "update")
+                    // @ts-ignore
+                    .mockReturnValue(updatedTermPayload)
+                const {statusCode} = await request(app)
+                    .put(`/terms/${termId.id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(termInputWithInvalidDates)
+                expect(statusCode).toBe(400)
+                expect(mockTerm).toHaveBeenCalledWith({
+                    where: termId
+                })
+                expect(mockConflicts).not.toHaveBeenCalled()
+                expect(mockUpdate).not.toHaveBeenCalled()
+            })
+        })
+        describe("Sending with admin authorization and term doesn't exist", () => {
+            it("Should return a 500", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockTerm = jest
+                    .spyOn(client.term, "findUniqueOrThrow")
+                    // @ts-ignore
+                    .mockRejectedValueOnce("Term does not exist")
+                const mockConflicts = jest
+                    .spyOn(client.term, "findMany")
+                    // @ts-ignore
+                    .mockReturnValueOnce([])
+                const mockUpdate = jest
+                    .spyOn(client.term, "update")
+                    // @ts-ignore
+                    .mockReturnValue(updatedTermPayload)
+                const {statusCode} = await request(app)
+                    .put(`/terms/${termId.id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(termInputWithInvalidDates)
+                expect(statusCode).toBe(500)
+                expect(mockTerm).toHaveBeenCalledWith({
+                    where: termId
+                })
+                expect(mockConflicts).not.toHaveBeenCalled()
+                expect(mockUpdate).not.toHaveBeenCalled()
+            })
+        })
     })
     describe("Term DELETE", () => {
-        
+        describe("Sending with admin authorization and the term exists", () => {
+            it("Should return a 200 and the deleted term", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockTermDeletion = jest
+                    .spyOn(client.term, "delete")
+                    // @ts-ignore
+                    .mockReturnValue(termPayload)
+                const {statusCode, body} = await request(app)
+                    .delete(`/terms/${termId.id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                expect(statusCode).toBe(200)
+                expect(body).toEqual(termPayload)
+                expect(mockTermDeletion).toHaveBeenCalledWith({
+                    where: termId
+                })
+            })
+        })
+        describe("Sending with non admin authorization and the term exists", () => {
+            it("Should return a 401", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(studentPayload)
+                const mockTermDeletion = jest
+                    .spyOn(client.term, "delete")
+                    // @ts-ignore
+                    .mockReturnValue(termPayload)
+                const {statusCode} = await request(app)
+                    .delete(`/terms/${termId.id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                expect(statusCode).toBe(401)
+                expect(mockTermDeletion).not.toHaveBeenCalled()
+            })
+        })
+        describe("Sending with admin authorization and the term does not exist", () => {
+            it("Should return a 500", async () => {
+                const mockAuthorization = jest
+                    .spyOn(client.user, "findUnique")
+                    // @ts-ignore
+                    .mockReturnValueOnce(adminPayload)
+                const mockTermDeletion = jest
+                    .spyOn(client.term, "delete")
+                    // @ts-ignore
+                    .mockRejectedValue("Term does not exist")
+                const {statusCode} = await request(app)
+                    .delete(`/terms/${termId.id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                expect(statusCode).toBe(500)
+                expect(mockTermDeletion).toHaveBeenCalledWith({
+                    where: termId
+                })
+            })
+        })
     })
 })
