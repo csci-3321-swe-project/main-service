@@ -261,6 +261,3 @@ paths:
       "201"
         description: "Successful user creation"
         content:
-
-
-      
