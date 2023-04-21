@@ -12,7 +12,7 @@ paths:
   /account:
     get:
       summary: "Gets the account of a user"
-      description: "Authroizes the account of the user and returns a response based on the authentication"
+      description: "Authenticates the users Authorization token and returns their account Id"
       paramaters:
         - name: "Authorizarion Token"
           in: header
@@ -27,25 +27,26 @@ paths:
           content: 
             application/json:
               schema:
-                type: object
-                properties:
-                  id: 
-                    type: string
-                  isMock: 
-                    type: boolean
-                  role: 
-                    type: string
-                    enum:
-                      - "ADMINSTRATOR"
-                      - "STUDENT"
-                      - "PROFESSOR"
-                  fistName:
-                    type: string
-                  lastName:
-                    type: string
-                  instructingIds:
-                    type: array
-                    items: string
+              $ref: '#/prisma/schema.prisma/User'
+                # type: object
+                # properties:
+                #   id: 
+                #     type: string
+                #   isMock: 
+                #     type: boolean
+                #   role: 
+                #     type: string
+                #     enum:
+                #       - "ADMINSTRATOR"
+                #       - "STUDENT"
+                #       - "PROFESSOR"
+                #   fistName:
+                #     type: string
+                #   lastName:
+                #     type: string
+                #   instructingIds:
+                #     type: array
+                #     items: string
   /courses:
     get:
       summary: Gets the course
