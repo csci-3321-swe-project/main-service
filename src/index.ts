@@ -1,3 +1,4 @@
+import createServer from "./utilities/server";
 import cors from "cors";
 import express from "express";
 import errorHandler from "./error-handlers/error-handler";
@@ -9,8 +10,9 @@ import users from "./routes/users";
 import terms from "./routes/terms";
 import environment from "./utilities/environment";
 
-const app = express();
+const app = createServer()
 const port = environment.PORT;
+
 
 // Middleware
 app.use(express.json());
@@ -31,3 +33,5 @@ app.use(errorHandler);
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+
+export default app
