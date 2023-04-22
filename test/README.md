@@ -1,18 +1,19 @@
 # Testing
 
-This program has automated testing suites made to test the requests made to the app server.
+This service has automated unit testing suites made to test the requests made to the app server.
 
 ## Prerequisites
 - [Jest](https://jestjs.io/)
 - [Supertest](https://www.npmjs.com/package/supertest)
-- [Github Actions](https://github.com/features/actions)
+- [Github Actions](https://github.com/en/actions)
 - [App Server Instanse](#creating-a-server-instance)
 
 ## Creating a Test Suite
-A test suite can be created by making a new file in the `test` folder labeled `[filename].test.ts`. Each suite needs to make an [app server instance](#creating-a-server-instance).
+A test suite can be created by making a new file in the `test` folder labeled `[filename].test.ts`.
 
 ## Creating a server instance
-An instance of the app server can be created by including the following line at the beginnig of the suite: 
+Each testing suite needs to make an instance of the app server.
+This instance can be created by including the following line at the beginnig of the suite: 
 ```ts
     const app = createServer()
 ```
@@ -94,3 +95,14 @@ describe("Account GET", () => {
     })
 })
 ```
+
+## Running the Tests
+Run `npm test` in the command line to run all of your test suites. You can add arguments to the command using `--` after the command and before the argument with a space in between both. These arguments and info can be found on [Jest](https://jestjs.io/docs/cli).
+
+## Using Github Actions to Automate
+This service uses [Github Actions](https://docs.github.com/en/actions) to automate its tests. To update the automated actions performed, update the `node.js.yml` in the `github\workflows` folder. The traits needed for testing purposes are as following:
+- `on` which is used to decide what Github actions will trigger tests.
+- `runs-on` which decides what operating systems to run the tests on.
+- `node-version` which decides which versions of `nodejs` to run the tests on.
+- `env` which decides the environment to run the tests on.
+- `steps` which holds the differents steps to take when running the tests which include running the tests themselves.
