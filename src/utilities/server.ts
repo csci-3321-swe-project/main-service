@@ -6,7 +6,7 @@ import courses from "../routes/courses";
 import options from "../routes/options";
 import tokens from "../routes/tokens";
 import users from "../routes/users";
-import terms from "../routes/terms"
+import terms from "../routes/terms";
 
 // Creates a server instance
 function createServer(){
