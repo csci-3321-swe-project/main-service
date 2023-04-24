@@ -391,3 +391,731 @@
  * 
  *                   ]
  */
+
+//COURSES
+
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *      courseCreationInfo:
+ *          type: object
+ *          required:
+ *              - name
+ *              - termId
+ *              - department
+ *              - code
+ *              - description
+ *          properties:
+ *              name:
+ *                  type: String
+ *                  default: "Software Engineering"
+ *              termId:
+ *                  type: String
+ *                  default: "64248ad776ebc32a873efdc0"
+ *              department:
+ *                  type: Department
+ *                  default: "COMPUTER_SCIENCE"
+ *              code:
+ *                  type: Int
+ *                  default: 3321
+ *              description:
+ *                  type: String
+ *                  default: "A course on learning how to develop and maintain a service."
+ */
+
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *      course:
+ *          type: object
+ *          properties:
+ *              id:
+ *                  type: String
+ *                  default: "64248ad776ebc32a873efdc0"
+ *              name:
+ *                  type: String
+ *                  default: "Software Engineering"
+ *              term:
+ *                  type: Term
+ *                  default: {
+ *                              id: "pb3456tyu7801we56bop69x",
+ *                              season: "FALL",
+ *                              year: 2023,
+ *                              startTime: 2023-08-17T00:00:00.000+00:00,
+ *                              endTime: 2023-12-17T00:00:00.000+00:00,
+ *                              course: []
+ *                           }
+ *              termId:
+ *                  type: String
+ *                  default: "pb3456tyu7801we56bop69x"
+ *              department:
+ *                  type: Department
+ *                  default: "COMPUTER_SCIENCE"
+ *              code:
+ *                  type: Int
+ *                  default: 3321
+ *              description:
+ *                  type: String
+ *                  default: "A course on learning how to develop and maintain a service."
+ *              courseSections:
+ *                  type: CourseSection[]
+ *                  default: []
+ *              createdBy:
+ *                  type: User
+ *                  default: {
+ *                              id: "642486eb76ebc32a07efbde",
+ *                              isMock: true,
+ *                              role: "ADMINISTRATION",
+ *                              email: "janeDoe@email.com",
+ *                              firstName: "Jane",
+ *                              lastName: "Doe",
+ *                              registations: [],
+ *                              instructing: [],
+ *                              instructingIds: [],
+ *                              coursesCreated: [],
+ *                              coursesUpdated: [],
+ *                              updateIds: [],
+ *                              secCreated: [],
+ *                              secUpdated: [],
+ *                              secUpdatedIds: [],
+ *                              usersReged: []
+ *                           }
+ *              createdById:
+ *                  type: String
+ *                  default: "642486eb76ebc32a07efbde"
+ *              createdOn:
+ *                  type: String
+ *                  default: 'Sun Apr 23 2023 19:24:52 GMT-0500 (Central Daylight Time)'
+ *              updatedByUsers:
+ *                  type: User[]
+ *                  default: []
+ *              updatedByIds:
+ *                  type: String[]
+ *                  default: []
+ *              updatedOnTimes:
+ *                  type: String[]
+ *                  default: []
+ */
+
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *      courseList:
+ *          type: Course[]
+ *          default: [
+ *                      {
+ *                          id: "64248ad776ebc32a873efdc0",
+ *                          name: "Software Engineering",
+ *                          term: {
+ *                                  id: "pb3456tyu7801we56bop69x",
+ *                                  season: "FALL",
+ *                                  year: 2023,
+ *                                  startTime: 2023-08-17T00:00:00.000+00:00,
+ *                                  endTime: 2023-12-17T00:00:00.000+00:00,
+ *                                  course: []
+ *                                },
+ *                          termId: "pb3456tyu7801we56bop69x",
+ *                          department: "COMPUTER_SCIENCE",
+ *                          code: 3321,
+ *                          description: "A course on learning how to develop and maintain a service.",
+ *                          courseSections: [],
+ *                          createdBy: {
+ *                                          id: "642486eb76ebc32a07efbde",
+ *                                          isMock: true,
+ *                                          role: "ADMINISTRATION",
+ *                                          email: "janeDoe@email.com",
+ *                                          firstName: "Jane",
+ *                                          lastName: "Doe",
+ *                                          registations: [],
+ *                                          instructing: [],
+ *                                          instructingIds: [],
+ *                                          coursesCreated: [],
+ *                                          coursesUpdated: [],
+ *                                          updateIds: [],
+ *                                          secCreated: [],
+ *                                          secUpdated: [],
+ *                                          secUpdatedIds: [],
+ *                                          usersReged: []
+ *                                     },
+ *                          createdById: "642486eb76ebc32a07efbde",
+ *                          createdOn: 'Sun Apr 23 2023 19:24:52 GMT-0500 (Central Daylight Time)',
+ *                          updatedByUsers: [],
+ *                          updatedByIds: [],
+ *                          updatedOnTimes: []
+ *                      }
+ *                   ]
+ */
+
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *      courseDeletionTransaction:
+ *          type: Transaction[]
+ *          default: [
+ *                      {count: 4},
+ *                      {count: 2},
+ *                      {
+ *                          id: "64248ad776ebc32a873efdc0",
+ *                          name: "Software Engineering",
+ *                          term: {
+ *                                  id: "pb3456tyu7801we56bop69x",
+ *                                  season: "FALL",
+ *                                  year: 2023,
+ *                                  startTime: 2023-08-17T00:00:00.000+00:00,
+ *                                  endTime: 2023-12-17T00:00:00.000+00:00,
+ *                                  course: []
+ *                                },
+ *                          termId: "pb3456tyu7801we56bop69x",
+ *                          department: "COMPUTER_SCIENCE",
+ *                          code: 3321,
+ *                          description: "A course on learning how to develop and maintain a service.",
+ *                          courseSections: [],
+ *                          createdBy: {
+ *                                          id: "642486eb76ebc32a07efbde",
+ *                                          isMock: true,
+ *                                          role: "ADMINISTRATION",
+ *                                          email: "janeDoe@email.com",
+ *                                          firstName: "Jane",
+ *                                          lastName: "Doe",
+ *                                          registations: [],
+ *                                          instructing: [],
+ *                                          instructingIds: [],
+ *                                          coursesCreated: [],
+ *                                          coursesUpdated: [],
+ *                                          updateIds: [],
+ *                                          secCreated: [],
+ *                                          secUpdated: [],
+ *                                          secUpdatedIds: [],
+ *                                          usersReged: []
+ *                                     },
+ *                          createdById: "642486eb76ebc32a07efbde",
+ *                          createdOn: 'Sun Apr 23 2023 19:24:52 GMT-0500 (Central Daylight Time)',
+ *                          updatedByUsers: [],
+ *                          updatedByIds: [],
+ *                          updatedOnTimes: []
+ *                      }
+ *                   ]
+ *          
+ */
+
+//SECTIONS
+
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *      sectionCreationInfo:
+ *          type: object
+ *          required:
+ *              - instructorIds
+ *              - capacity
+ *              - meetings
+ *          properties:
+ *              instructorIds:
+ *                  type: String[]
+ *                  default: ["641a06db480e1fb9a4cdaad1"]
+ *              capacity:
+ *                  type: Int
+ *                  default: 22
+ *              meetings:
+ *                  type: Meeting[]
+ *                  default: [
+ *                              {
+ *                                  daysOfWeek: ["TUESDAY","THURSDAY"],
+ *                                  startTime: "12:30:00",
+ *                                  endTime: "13:30:00",
+ *                                  location: "CSI-388"
+ *                              }
+ *                           ]
+ */
+
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *      section:
+ *          type: object
+ *          properties:
+ *              id:
+ *                  type: String
+ *                  default: "4423"
+ *              course:
+ *                  type: Course
+ *                  default: {
+ *                              id: "64248ad776ebc32a873efdc0",
+ *                              name: "Software Engineering",
+ *                              term: {
+ *                                      id: "pb3456tyu7801we56bop69x",
+ *                                      season: "FALL",
+ *                                      year: 2023,
+ *                                      startTime: 2023-08-17T00:00:00.000+00:00,
+ *                                      endTime: 2023-12-17T00:00:00.000+00:00,
+ *                                      course: []
+ *                                    },
+ *                              termId: "pb3456tyu7801we56bop69x",
+ *                              department: "COMPUTER_SCIENCE",
+ *                              code: 3321,
+ *                              description: "A course on learning how to develop and maintain a service.",
+ *                              courseSections: [],
+ *                              createdBy: {
+ *                                              id: "642486eb76ebc32a07efbde",
+ *                                              isMock: true,
+ *                                              role: "ADMINISTRATION",
+ *                                              email: "janeDoe@email.com",
+ *                                              firstName: "Jane",
+ *                                              lastName: "Doe",
+ *                                              registations: [],
+ *                                              instructing: [],
+ *                                              instructingIds: [],
+ *                                              coursesCreated: [],
+ *                                              coursesUpdated: [],
+ *                                              updateIds: [],
+ *                                              secCreated: [],
+ *                                              secUpdated: [],
+ *                                              secUpdatedIds: [],
+ *                                              usersReged: []
+ *                                         },
+ *                              createdById: "642486eb76ebc32a07efbde",
+ *                              createdOn: 'Sun Apr 23 2023 19:24:52 GMT-0500 (Central Daylight Time)',
+ *                              updatedByUsers: [],
+ *                              updatedByIds: [],
+ *                              updatedOnTimes: []
+ *                           }
+ *              courseId:
+ *                  type: String
+ *                  default: "64248ad776ebc32a873efdc0"
+ *              meetings:
+ *                  type: meeting[]
+ *                  default: [
+ *                              {
+ *                                  daysOfWeek: ["TUESDAY","THURSDAY"],
+ *                                  startTime: "12:30:00",
+ *                                  endTime: "13:30:00",
+ *                                  location: "CSI-388"
+ *                              }
+ *                           ]
+ *              instructors:
+ *                  type: User[]
+ *                  default: [
+ *                              {
+ *                                  id: "641a06db480e1fb9a4cdaad1",
+ *                                  isMock: true,
+ *                                  role: "PROFESSOR",
+ *                                  email: "johnDoe@email.com",
+ *                                  firstName: "John",
+ *                                  lastName: "Doe",
+ *                                  registations: [],
+ *                                  instructing: [],
+ *                                  instructingIds: [],
+ *                                  coursesCreated: [],
+ *                                  coursesUpdated: [],
+ *                                  updateIds: [],
+ *                                  secCreated: [],
+ *                                  secUpdated: [],
+ *                                  secUpdatedIds: [],
+ *                                  usersReged: []
+ *                              }
+ *                           ]
+ *              instructorIds: 
+ *                  type: String[]
+ *                  default: ["641a06db480e1fb9a4cdaad1"]
+ *              registrations: 
+ *                  type: Registration[]
+ *                  default: []
+ *              capacity:
+ *                  type: Int
+ *                  default: 22
+ *              sectionCreatedBy:
+ *                  type: User
+ *                  default: {
+ *                              id: "642486eb76ebc32a07efbde",
+ *                              isMock: true,
+ *                              role: "ADMINISTRATION",
+ *                              email: "janeDoe@email.com",
+ *                              firstName: "Jane",
+ *                              lastName: "Doe",
+ *                              registations: [],
+ *                              instructing: [],
+ *                              instructingIds: [],
+ *                              coursesCreated: [],
+ *                              coursesUpdated: [],
+ *                              updateIds: [],
+ *                              secCreated: [],
+ *                              secUpdated: [],
+ *                              secUpdatedIds: [],
+ *                              usersReged: []
+ *                           }
+ *              sectionCreatedById:
+ *                  type: String
+ *                  default: "642486eb76ebc32a07efbde"
+ *              sectionCreatedOn:
+ *                  type: String
+ *                  default: 'Sun Apr 23 2023 20:00:00 GMT-0500 (Central Daylight Time)'
+ *              sectionUpdatedByUsers:
+ *                  type: User[]
+ *                  default: []
+ *              sectionUpdatedByIds:
+ *                  type: String[]
+ *                  default: []
+ *              sectionUpdatedOnTimes:
+ *                  type: String[]
+ *                  default: []
+ *                  
+ *                  
+ */
+
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *      sectionDeletionTransaction:
+ *          type: Transaction[]
+ *          default: [
+ *                      {count: 4},
+ *                      {count: 2}
+ *                   ]
+ *          
+ */
+
+//REGISTRATION
+
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *      registration:
+ *          type: object
+ *          properties:
+ *              id:
+ *                  type: String
+ *                  default: "n35ing450jw05gi42tg"
+ *              user:
+ *                  type: User
+ *                  default: {
+ *                              id: "5gni5gb340jj35nibn3",
+ *                              isMock: true,
+ *                              role: "STUDENT",
+ *                              email: "joshDoe@email.com",
+ *                              firstName: "Josh",
+ *                              lastName: "Doe",
+ *                              registations: [],
+ *                              instructing: [],
+ *                              instructingIds: [],
+ *                              coursesCreated: [],
+ *                              coursesUpdated: [],
+ *                              updateIds: [],
+ *                              secCreated: [],
+ *                              secUpdated: [],
+ *                              secUpdatedIds: [],
+ *                              usersReged: []
+ *                           }
+ *              userId:
+ *                  type: String
+ *                  default: "5gni5gb340jj35nibn3"
+ *              courseSection:
+ *                  type: CourseSection
+ *                  default: {
+ *                              id: "4423",
+ *                              course: {
+ *                                          id: "64248ad776ebc32a873efdc0",
+ *                                          name: "Software Engineering",
+ *                                          term: {
+ *                                                  id: "pb3456tyu7801we56bop69x",
+ *                                                  season: "FALL",
+ *                                                  year: 2023,
+ *                                                  startTime: 2023-08-17T00:00:00.000+00:00,
+ *                                                  endTime: 2023-12-17T00:00:00.000+00:00,
+ *                                                  course: []
+ *                                          },
+ *                                          termId: "pb3456tyu7801we56bop69x",
+ *                                          department: "COMPUTER_SCIENCE",
+ *                                          code: 3321,
+ *                                          description: "A course on learning how to develop and maintain a service.",
+ *                                          courseSections: [],
+ *                                          createdBy: {
+ *                                                          id: "642486eb76ebc32a07efbde",
+ *                                                          isMock: true,
+ *                                                          role: "ADMINISTRATION",
+ *                                                          email: "janeDoe@email.com",
+ *                                                          firstName: "Jane",
+ *                                                          lastName: "Doe",
+ *                                                          registations: [],
+ *                                                          instructing: [],
+ *                                                          instructingIds: [],
+ *                                                          coursesCreated: [],
+ *                                                          coursesUpdated: [],
+ *                                                          updateIds: [],
+ *                                                          secCreated: [],
+ *                                                          secUpdated: [],
+ *                                                          secUpdatedIds: [],
+ *                                                          usersReged: []
+ *                                                     },
+ *                                          createdById: "642486eb76ebc32a07efbde",
+ *                                          createdOn: 'Sun Apr 23 2023 19:24:52 GMT-0500 (Central Daylight Time)',
+ *                                          updatedByUsers: [],
+ *                                          updatedByIds: [],
+ *                                          updatedOnTimes: []
+ *                                     },
+ *                              courseId: "64248ad776ebc32a873efdc0",
+ *                              meetings: [
+ *                                          {
+ *                                              daysOfWeek: ["TUESDAY","THURSDAY"],
+ *                                              startTime: "12:30:00",
+ *                                              endTime: "13:30:00",
+ *                                              location: "CSI-388"
+ *                                          }
+ *                                        ],
+ *                              instructors: [
+ *                                              {
+ *                                                  id: "641a06db480e1fb9a4cdaad1",
+ *                                                  isMock: true,
+ *                                                  role: "PROFESSOR",
+ *                                                  email: "johnDoe@email.com",
+ *                                                  firstName: "John",
+ *                                                  lastName: "Doe",
+ *                                                  registations: [],
+ *                                                  instructing: [],
+ *                                                  instructingIds: [],
+ *                                                  coursesCreated: [],
+ *                                                  coursesUpdated: [],
+ *                                                  updateIds: [],
+ *                                                  secCreated: [],
+ *                                                  secUpdated: [],
+ *                                                  secUpdatedIds: [],
+ *                                                  usersReged: []
+ *                                              }
+ *                                           ],
+ *                              instructorIds: ["641a06db480e1fb9a4cdaad1"],
+ *                              registrations: [],
+ *                              capacity: 22,
+ *                              sectionCreatedBy: {
+ *                                                  id: "642486eb76ebc32a07efbde",
+ *                                                  isMock: true,
+ *                                                  role: "ADMINISTRATION",
+ *                                                  email: "janeDoe@email.com",
+ *                                                  firstName: "Jane",
+ *                                                  lastName: "Doe",
+ *                                                  registations: [],
+ *                                                  instructing: [],
+ *                                                  instructingIds: [],
+ *                                                  coursesCreated: [],
+ *                                                  coursesUpdated: [],
+ *                                                  updateIds: [],
+ *                                                  secCreated: [],
+ *                                                  secUpdated: [],
+ *                                                  secUpdatedIds: [],
+ *                                                  usersReged: []
+ *                                                },
+ *                              sectionCreatedById: "642486eb76ebc32a07efbde",
+ *                              sectionCreatedOn: 'Sun Apr 23 2023 20:00:00 GMT-0500 (Central Daylight Time)',
+ *                              sectionUpdatedByUsers: [],
+ *                              sectionUpdatedByIds: [],
+ *                              sectionUpdatedOnTimes: []
+ *                           }
+ *              createdAt:
+ *                  type: DateTime
+ *                  default: 2023-08-17T00:00:00.000+00:00
+ *              priority:
+ *                  type: Boolean
+ *                  default: false
+ *              registeredBy:
+ *                  type: User
+ *                  default: {
+ *                              id: "642486eb76ebc32a07efbde",
+ *                              isMock: true,
+ *                              role: "ADMINISTRATION",
+ *                              email: "janeDoe@email.com",
+ *                              firstName: "Jane",
+ *                              lastName: "Doe",
+ *                              registations: [],
+ *                              instructing: [],
+ *                              instructingIds: [],
+ *                              coursesCreated: [],
+ *                              coursesUpdated: [],
+ *                              updateIds: [],
+ *                              secCreated: [],
+ *                              secUpdated: [],
+ *                              secUpdatedIds: [],
+ *                              usersReged: []
+ *                           }
+ *              registeredById:
+ *                  type: String
+ *                  default: "642486eb76ebc32a07efbde"
+ *              registeredOn:
+ *                  type: String
+ *                  default: 'Sun Apr 24 2023 20:00:00 GMT-0500 (Central Daylight Time)'
+ */
+
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *      registrationList:
+ *          type: Registration[]
+ *          default: [
+ *                      {
+ *                          id: "n35ing450jw05gi42tg",
+ *                          user: {
+ *                              id: "5gni5gb340jj35nibn3",
+ *                              isMock: true,
+ *                              role: "STUDENT",
+ *                              email: "joshDoe@email.com",
+ *                              firstName: "Josh",
+ *                              lastName: "Doe",
+ *                              registations: [],
+ *                              instructing: [],
+ *                              instructingIds: [],
+ *                              coursesCreated: [],
+ *                              coursesUpdated: [],
+ *                              updateIds: [],
+ *                              secCreated: [],
+ *                              secUpdated: [],
+ *                              secUpdatedIds: [],
+ *                              usersReged: []
+ *                           },
+ *                          userId: "5gni5gb340jj35nibn3",
+ *                          courseSection: {
+ *                              id: "4423",
+ *                              course: {
+ *                                          id: "64248ad776ebc32a873efdc0",
+ *                                          name: "Software Engineering",
+ *                                          term: {
+ *                                                  id: "pb3456tyu7801we56bop69x",
+ *                                                  season: "FALL",
+ *                                                  year: 2023,
+ *                                                  startTime: 2023-08-17T00:00:00.000+00:00,
+ *                                                  endTime: 2023-12-17T00:00:00.000+00:00,
+ *                                                  course: []
+ *                                          },
+ *                                          termId: "pb3456tyu7801we56bop69x",
+ *                                          department: "COMPUTER_SCIENCE",
+ *                                          code: 3321,
+ *                                          description: "A course on learning how to develop and maintain a service.",
+ *                                          courseSections: [],
+ *                                          createdBy: {
+ *                                                          id: "642486eb76ebc32a07efbde",
+ *                                                          isMock: true,
+ *                                                          role: "ADMINISTRATION",
+ *                                                          email: "janeDoe@email.com",
+ *                                                          firstName: "Jane",
+ *                                                          lastName: "Doe",
+ *                                                          registations: [],
+ *                                                          instructing: [],
+ *                                                          instructingIds: [],
+ *                                                          coursesCreated: [],
+ *                                                          coursesUpdated: [],
+ *                                                          updateIds: [],
+ *                                                          secCreated: [],
+ *                                                          secUpdated: [],
+ *                                                          secUpdatedIds: [],
+ *                                                          usersReged: []
+ *                                                     },
+ *                                          createdById: "642486eb76ebc32a07efbde",
+ *                                          createdOn: 'Sun Apr 23 2023 19:24:52 GMT-0500 (Central Daylight Time)',
+ *                                          updatedByUsers: [],
+ *                                          updatedByIds: [],
+ *                                          updatedOnTimes: []
+ *                                     },
+ *                              courseId: "64248ad776ebc32a873efdc0",
+ *                              meetings: [
+ *                                          {
+ *                                              daysOfWeek: ["TUESDAY","THURSDAY"],
+ *                                              startTime: "12:30:00",
+ *                                              endTime: "13:30:00",
+ *                                              location: "CSI-388"
+ *                                          }
+ *                                        ],
+ *                              instructors: [
+ *                                              {
+ *                                                  id: "641a06db480e1fb9a4cdaad1",
+ *                                                  isMock: true,
+ *                                                  role: "PROFESSOR",
+ *                                                  email: "johnDoe@email.com",
+ *                                                  firstName: "John",
+ *                                                  lastName: "Doe",
+ *                                                  registations: [],
+ *                                                  instructing: [],
+ *                                                  instructingIds: [],
+ *                                                  coursesCreated: [],
+ *                                                  coursesUpdated: [],
+ *                                                  updateIds: [],
+ *                                                  secCreated: [],
+ *                                                  secUpdated: [],
+ *                                                  secUpdatedIds: [],
+ *                                                  usersReged: []
+ *                                              }
+ *                                           ],
+ *                              instructorIds: ["641a06db480e1fb9a4cdaad1"],
+ *                              registrations: [],
+ *                              capacity: 22,
+ *                              sectionCreatedBy: {
+ *                                                  id: "642486eb76ebc32a07efbde",
+ *                                                  isMock: true,
+ *                                                  role: "ADMINISTRATION",
+ *                                                  email: "janeDoe@email.com",
+ *                                                  firstName: "Jane",
+ *                                                  lastName: "Doe",
+ *                                                  registations: [],
+ *                                                  instructing: [],
+ *                                                  instructingIds: [],
+ *                                                  coursesCreated: [],
+ *                                                  coursesUpdated: [],
+ *                                                  updateIds: [],
+ *                                                  secCreated: [],
+ *                                                  secUpdated: [],
+ *                                                  secUpdatedIds: [],
+ *                                                  usersReged: []
+ *                                                },
+ *                              sectionCreatedById: "642486eb76ebc32a07efbde",
+ *                              sectionCreatedOn: 'Sun Apr 23 2023 20:00:00 GMT-0500 (Central Daylight Time)',
+ *                              sectionUpdatedByUsers: [],
+ *                              sectionUpdatedByIds: [],
+ *                              sectionUpdatedOnTimes: []
+ *                           },
+ *                          createdAt: 2023-08-17T00:00:00.000+00:00,
+ *                          priority: false,
+ *                          registeredBy: {
+ *                              id: "642486eb76ebc32a07efbde",
+ *                              isMock: true,
+ *                              role: "ADMINISTRATION",
+ *                              email: "janeDoe@email.com",
+ *                              firstName: "Jane",
+ *                              lastName: "Doe",
+ *                              registations: [],
+ *                              instructing: [],
+ *                              instructingIds: [],
+ *                              coursesCreated: [],
+ *                              coursesUpdated: [],
+ *                              updateIds: [],
+ *                              secCreated: [],
+ *                              secUpdated: [],
+ *                              secUpdatedIds: [],
+ *                              usersReged: []
+ *                           },
+ *                          registeredById: "642486eb76ebc32a07efbde",
+ *                          registeredOn: 'Sun Apr 24 2023 20:00:00 GMT-0500 (Central Daylight Time)'
+ *                      }
+ *                   ]
+ */
+
+//ROSTER
+
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *      roster:
+ *          type: object
+ *          properties:
+ *              students:
+ *                  type: (Registration & User)[]
+ *                  default: []
+ *              waitlist:
+ *                  type: (Registration & User)[]
+ *                  default: []
+ */
+

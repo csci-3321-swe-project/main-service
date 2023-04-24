@@ -9,6 +9,41 @@ import { TimeRange } from "../utilities/time-range";
 
 const router = Router();
 
+/**
+ * @openapi
+ * /courses:
+ *  get:
+ *    tags:
+ *      - Courses
+ *    summary: "Gets the courses with given info"
+ *    description: "Given a query, it will fetch all classes that fit the given description along with filtering by term and department."
+ *    parameters:
+ *      - name: q
+ *        description: "The query for finding the class."
+ *        in: query
+ *        required: true
+ *        default: "Software Engineering"
+ *      - name: termId
+ *        in: query
+ *        description: "The id for the term the user wants the class to be in."
+ *        default: "pb3456tyu7801we56bop69x"
+ *      - name: dept
+ *        in: query
+ *        description: "The department the user wants the class to be a part of."
+ *        default: "COMPUTER_SCIENCE"
+ *    responses:
+ *      200:
+ *        description: "Courses gather successfully"
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/courseList'
+ *      400:
+ *        description: "No query entered"
+ *      404:
+ *        description: "Server not found"
+ */
+
 router.get(
   "/",
   authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
@@ -51,6 +86,35 @@ router.get(
   }
 );
 
+/**
+ * @openapi
+ * /courses:
+ *  post:
+ *    tags:
+ *      - Courses
+ *    summary: "Creates a course"
+ *    description: "Allows users with admin authorization to create a course given certain parameters."
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/courseCreationInfo'
+ *    responses:
+ *      201:
+ *        description: "Created the course successfuly"
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/course'
+ *      400:
+ *        description: "Invalid request body"
+ *      401:
+ *        description: "Non admin authorization"
+ *      404:
+ *        description: "Server not found"
+ */
+
 // Create Course
 router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   const schema = z.object({
@@ -78,6 +142,34 @@ router.post("/", authorize(["ADMINISTRATOR"]), async (req, res, next) => {
   }
 });
 
+/**
+ * @openapi
+ * /courses/{courseId}:
+ *  get:
+ *    tags:
+ *      - Courses
+ *    summary: "Gets course based on Id"
+ *    description: "Given the couse id, this will fetch the course with the id."
+ *    parameters:
+ *      - name: courseId
+ *        in: path
+ *        required: true
+ *        default: "64248ad776ebc32a873efdc0"
+ *    responses:
+ *      200:
+ *        description: "Course fetched successfuly"
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/course'
+ *      400:
+ *        descripton: "Unique course not found"
+ *      401:
+ *        descripton: "Invalid authorization token"
+ *      404:
+ *        description: "Id does not exist"
+ */
+
 // Get Course
 router.get(
   "/:courseId",
@@ -98,6 +190,40 @@ router.get(
     }
   }
 );
+
+/**
+ * @openapi
+ * /courses/{courseId}:
+ *  put:
+ *    tags:
+ *      - Courses
+ *    summary: "Updates course based on id"
+ *    description: "Allows users with admin authorization to update the course with the given id."
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/courseCreationInfo'
+ *    parameters:
+ *      - name: courseId
+ *        in: path
+ *        required: true
+ *        default: "64248ad776ebc32a873efdc0"
+ *    responses:
+ *      200:
+ *        description: "Course updated successfuly"
+ *        content:
+ *          applicaton/json:
+ *            schema:
+ *              $ref: '#/components/schemas/course'
+ *      400:
+ *        description: "Invalid request body"
+ *      401:
+ *        description: "Non admin authorization"
+ *      404:
+ *        description: "Id does not exist"
+ */
 
 // Update Course
 router.put(
@@ -135,6 +261,34 @@ router.put(
   }
 );
 
+/**
+ * @openapi
+ * /courses/{courseId}:
+ *  delete:
+ *    tags:
+ *      - Courses
+ *    summary: "Deletes course based on id"
+ *    description: "Allows users with admin authorization to delete a course with the given id."
+ *    parameters:
+ *      - name: courseId
+ *        in: path
+ *        required: true
+ *        default: "64248ad776ebc32a873efdc0"
+ *    responses:
+ *      200:
+ *        description: "Course deleted successfuly"
+ *        content:
+ *          application/json:
+ *            schema: 
+ *              $ref: "#/components/schemas/courseDeletionTransaction"
+ *      401:
+ *        description: "Non admin authorization"
+ *      404:
+ *        description: "Id does not exist"
+ *      500:
+ *        description: "Course does not exist"
+ */
+
 // Delete Course
 router.delete(
   "/:courseId",
@@ -163,6 +317,40 @@ router.delete(
     }
   }
 );
+
+/**
+ * @openapi
+ * /courses/{courseId}/sections:
+ *  post:
+ *    tags:
+ *      - Sections
+ *    summary: "Creates course section"
+ *    description: "Allows users with admin authorization to create a section of a course."
+ *    parameters:
+ *      - name: courseId
+ *        in: path
+ *        required: true
+ *        default: "64248ad776ebc32a873efdc0"
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/sectionCreationInfo'
+ *    responses:
+ *      201:
+ *        description: "Section created successfuly"
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/section'
+ *      400:
+ *        description: "Invalid request body or invalid time range"
+ *      401:
+ *        description: "Non admin authorization"
+ *      404:
+ *        description: "Course Id does not exist"
+ */
 
 // Create Course Section 
 router.post(
@@ -215,6 +403,38 @@ router.post(
   }
 );
 
+/**
+ * @openapi
+ * /courses/{courseId}/sections/{sectionId}:
+ *  get:
+ *    tags:
+ *      - Sections
+ *    summary:  "Gets the section based on id"
+ *    description: "Allows users with adim authorization to get the course section with the corresponding id."
+ *    parameters:
+ *      - name: courseId
+ *        in: path
+ *        required: true
+ *        default: "64248ad776ebc32a873efdc0"
+ *      - name: sectionId
+ *        in: path
+ *        required: true
+ *        default: "4423"
+ *    responses:
+ *      200:
+ *        description: "Retrieved the section successfully"
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/section'
+ *      401:
+ *        description: "Non adim authorization"
+ *      404:
+ *        description: "Course id or section id does not exist"
+ *      500: 
+ *        description: "Unique course does not exist"
+ */
+
 // Get Course Section
 router.get(
   "/:courseId/sections/:sectionId",
@@ -232,6 +452,38 @@ router.get(
     }
   }
 );
+
+/**
+ * @openapi
+ * /courses/{courseId}/sections/{sectionId}:
+ *  delete:
+ *    tags:
+ *      - Sections
+ *    summary:  "Deletes the section based on id"
+ *    description: "Allows users with adim authorization to delete the course section with the corresponding id."
+ *    parameters:
+ *      - name: courseId
+ *        in: path
+ *        required: true
+ *        default: "64248ad776ebc32a873efdc0"
+ *      - name: sectionId
+ *        in: path
+ *        required: true
+ *        default: "4423"
+ *    responses:
+ *      200:
+ *        description: "Section deleted successfuly"
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/sectionDeletionTransaction'
+ *      401:
+ *        description: "Non adim authorization"
+ *      404:
+ *        description: "Course id or section id does not exist"
+ *      500:
+ *        description: "Section does not exist"
+ */
 
 // Delete Course Section
 router.delete(
@@ -256,6 +508,46 @@ router.delete(
     }
   }
 );
+
+/**
+ * @openapi
+ * /courses/{courseId}/sections/{sectionId}:
+ *  put:
+ *    tags:
+ *      - Sections
+ *    summary:  "Updates the section based on id"
+ *    description: "Allows users with adim authorization to update the course section with the corresponding id."
+ *    parameters:
+ *      - name: courseId
+ *        in: path
+ *        required: true
+ *        default: "64248ad776ebc32a873efdc0"
+ *      - name: sectionId
+ *        in: path
+ *        required: true
+ *        default: "4423"
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/sectionCreationInfo'
+ *    responses:
+ *      200:
+ *        description: "Section updated successfuly"
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/section'
+ *      400:
+ *        description: "Invalid request body or invalid time range"
+ *      401:
+ *        description: "Non adim authorization"
+ *      404:
+ *        description: "Course id or section id does not exist"
+ *      500:
+ *        description: "Section does not exist"
+ */
 
 // Update Course Section
 router.put(
@@ -306,6 +598,38 @@ router.put(
   }
 );
 
+/**
+ * @openapi
+ * /courses/{courseId}/sections/{sectionId}/roster:
+ *  get:
+ *    tags:
+ *      - Roster
+ *    summary: "Gets the roster for a section"
+ *    description: "Gets all the users registered for a section, both fully registered and waitlisted."
+ *    parameters:
+ *      - name: courseId
+ *        in: path
+ *        required: true
+ *        default: "64248ad776ebc32a873efdc0"
+ *      - name: sectionId
+ *        in: path
+ *        required: true
+ *        default: "4423"
+ *    responses:
+ *      200:
+ *        description: "Fetched the roster successfuly"
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/roster'
+ *      401:
+ *        description: "Invalid authorization token"
+ *      404:
+ *        description: "Server not found"
+ *      500:
+ *        description: "Unique section does not exist"
+ */
+
 // Get Registrations
 router.get(
   "/:courseId/sections/:sectionId/roster",
@@ -334,6 +658,42 @@ router.get(
     }
   }
 );
+
+/**
+ * @openapi
+ * /courses/{courseId}/sections/{sectionId}/registrations:
+ *  post:
+ *    tags:
+ *      - Registrations
+ *    summary: "Create a registration for a section"
+ *    description: "User can register for themselves or another user for a section."
+ *    parameters:
+ *      - name: courseId
+ *        in: path
+ *        required: true
+ *        default: "64248ad776ebc32a873efdc0"
+ *      - name: sectionId
+ *        in: path
+ *        required: true
+ *        default: "4423"
+ *      - name: userId
+ *        in: cookies
+ *        required: true
+ *        default: "642486eb76ebc32a07efbde"
+ *    responses:
+ *      200:
+ *        description: "Registration created successfully"
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/registration'
+ *      400:
+ *        description: "Registered for the course in a different section"
+ *      401:
+ *        description: "Invalid authorization token"
+ *      404:
+ *        description: "Server not available"
+ */
 
 // Create Registration
 router.post(
@@ -376,6 +736,58 @@ router.post(
   }
 );
 
+/**
+ * @openapi
+ * /courses/{courseId}/sections/{sectionId}/registrations/{registrationId}:
+ *  put:
+ *    tags:
+ *      - Registrations
+ *    summary: "Update the priority of a registration"
+ *    description: "Allows users with admin or professor authorization to change the priority status of a registration."
+ *    parameters:
+ *      - name: courseId
+ *        in: path
+ *        required: true
+ *        default: "64248ad776ebc32a873efdc0"
+ *      - name: sectionId
+ *        in: path
+ *        required: true
+ *        default: "4423"
+ *      - name: registrationId
+ *        in: path
+ *        required: true
+ *        default: "n35ing450jw05gi42tg"
+ *      - name: userId
+ *        in: cookies
+ *        required: true
+ *        default: "642486eb76ebc32a07efbde"
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            required: priority
+ *            properties:
+ *              priority:
+ *                type: Boolean
+ *                default: false
+ *              
+ *    responses:
+ *      200:
+ *        description: "Registration created successfully"
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/registration'              
+ *      400:
+ *        description: "Registered for the course in a different section"
+ *      401:
+ *        description: "Invalid authorization token"
+ *      404:
+ *        description: "Server not available"
+ */
+
 router.put(
   "/:courseId/sections/:sectionId/registrations/:registrationId",
   authorize(["PROFESSOR", "ADMINISTRATOR"]),
@@ -401,6 +813,41 @@ router.put(
     }
   }
 );
+
+/**
+ * @openapi
+ * /courses/{courseId}/sections/{sectionId}/registrations:
+ *  delete:
+ *    tags:
+ *      - Registrations
+ *    summary: "Update the priority of a registration"
+ *    description: "Allows users with admin or professor authorization to change the priority status of a registration."
+ *    parameters:
+ *      - name: courseId
+ *        in: path
+ *        required: true
+ *        default: "64248ad776ebc32a873efdc0"
+ *      - name: sectionId
+ *        in: path
+ *        required: true
+ *        default: "4423"
+ *      - name: userId
+ *        in: cookies
+ *        required: true
+ *        default: "642486eb76ebc32a07efbde" 
+ *    responses:
+ *      200:
+ *        description: "Registration deleted successfully"
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/registrationList'
+ *      401:
+ *        description: "Invalid authorization token"
+ *      404:
+ *        description: "Server not available"
+ */
+
 // Delete Registrations
 
 router.delete(
