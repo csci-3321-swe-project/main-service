@@ -95,6 +95,11 @@ describe("Account GET", () => {
     })
 })
 ```
+>To find valid inputs to requests:
+>- Run `npm run build`
+>- Run `npm run dev`
+>- Go to `http://localhost:{port}/docs` where `port` is defined in the `.env` file
+>- Check the request body and press `schema`
 
 ## Running the Tests
 Run `npm test` in the command line to run all of your test suites. You can add arguments to the command using `--` after the command and before the argument with a space in between both. These arguments and info can be found on [Jest](https://jestjs.io/docs/cli).
