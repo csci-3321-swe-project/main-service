@@ -1,0 +1,37 @@
+Install Node.js 18 on your machine by downloading and running the installer from the official Node.js website: https://nodejs.org/en/download/
+
+npm install pm2 -g
+
+Download the MongoDB Community Server from the official MongoDB website: https://www.mongodb.com/try/download/community
+
+Run the installer and choose the Complete setup type to install all of the components.
+
+During the installation, choose the Custom installation option to specify the installation directory and to install MongoDB as a service. The default installation directory is C:\Program Files\MongoDB\Server\4.4.
+
+After the installation, create a data directory where MongoDB will store its data. The default data directory is C:\data\db. If you want to use a different directory, create it and make sure that it has the appropriate permissions for MongoDB to read and write data to it.
+
+Add the MongoDB binaries to your system's PATH environment variable. To do this, follow these steps:
+
+Open the Start menu and search for "Environment Variables".
+Click on "Edit the system environment variables".
+Click on the "Environment Variables" button.
+Under "System Variables", find the "Path" variable and click on "Edit".
+Click on "New" and add the path to the MongoDB binaries, which is typically "C:\Program Files\MongoDB\Server\4.4\bin".
+Click "OK" to close all windows.
+Clone the Github repository for the Main Service onto your local machine by running the following command in your terminal: git clone <repository URL>
+
+Navigate to the cloned repository's directory in your terminal by running the following command: cd <repository directory>
+
+Create a new file called .env in the root directory of the cloned repository by running the following command: type nul > .env
+
+Copy the contents of the .env.template file provided in the repository, and paste them into the new .env file by running the following command: copy .env.template .env
+
+Fill in the variables in the .env file with your own definitions. For example, you can open the .env file in a text editor and set the DATABASE_URL variable to the URL for your MongoDB instance. The default value is mongodb://localhost:27017/registration_system.
+
+Install the necessary dependencies by running the following command in your terminal: npm i
+
+Generate a data layer SDK based on the schema file defined in prisma/schema.prisma and push the schema changes to the database by running the following command in your terminal: npm run gen
+
+To run the development server, run the following command in your terminal: npm run dev
+
+To run the production server, first build the source files by running the following command in your terminal: npm run build, then run the following command to start the server: npm run start.
