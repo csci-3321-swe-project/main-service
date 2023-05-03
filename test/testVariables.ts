@@ -1,3 +1,4 @@
+import { updateTaggedTemplate } from "typescript"
 
 export const userInput = {
     email: "example@email.com",
@@ -58,9 +59,11 @@ export const invalRoleUserPayload = {
     instructingIds: [],
 }
 
+export const termId = {id: "12434gretbhteyrht"}
+
 export const courseInput = {
     name: "Software Engineering",
-    term: "SPRING_2022",
+    termId: termId.id,
     department: "COMPUTER_SCIENCE",
     code: 3321,
     description: "A great time",
@@ -75,6 +78,14 @@ export const coursePayload = {
     description: "A great time",
 }
 
+export const parsedCourseQuery = {
+    q: ["Software Engineering"],
+    termId: "64248ad776ebc32a873efdc0",
+    dept: "COMPUTER_SCIENCE"
+}
+
+export const courseQuery = "q=Software Engineering&termId=64248ad776ebc32a873efdc0&dept=COMPUTER_SCIENCE"
+
 export const courseId = {courseId: 3321}
 
 export const sectionId = {id: "4423"}
@@ -82,6 +93,7 @@ export const sectionId = {id: "4423"}
 export const courseSection = {
     sectionId,
     courseId,
+    capacity: 22,
     meetings: [
         {
             daysOfWeek: [
@@ -107,6 +119,8 @@ export const courseInfoPayload = {
 }
 
 export const courseSectionInput = {
+    instructorIds: ["641a06db480e1fb9a4cdaad1"],
+    capacity: 22,
     meetings: [
         {
             daysOfWeek: [
@@ -118,7 +132,6 @@ export const courseSectionInput = {
             location: "CSI-388"
         }
     ],
-    instructorIds: ["641a06db480e1fb9a4cdaad1"],
 }
 
 export const invalidCourseSectionInput = {
@@ -308,26 +321,64 @@ export const optionsPayload = {
             value: "SUNDAY"
         }
     ],
-    terms: [
+    seasons: [
         {
-            name: "Spring 2021",
-            value: "SPRING_2021"
+            name: "Fall",
+            value: "FALL"
         },
         {
-            name: "Fall 2021",
-            value: "FALL_2021"
+            name: "Spring",
+            value: "SPRING"
         },
-        {
-            name: "Spring 2022",
-            value: "SPRING_2022"
-        },
-        {
-            name: "Fall 2022",
-            value: "FALL_2022"
-        },
-        {
-            name: "Spring 2023",
-            value: "SPRING_2023"
-        }
     ]
+}
+
+
+const currentDate = new Date();
+const yearBefore = currentDate.setFullYear(currentDate.getFullYear() - 1)
+const yearAfter = currentDate.setFullYear(currentDate.getFullYear() + 1)
+
+export const termInput = {
+    season: "FALL",
+    year: 2023,
+    startTime: yearBefore,
+    endTime: yearAfter,
+}
+
+export const termInputWithInvalidDates = {
+    season: "FALL",
+    year: 2023,
+    startTime: yearAfter,
+    endTime: yearBefore,
+}
+
+export const invalidTermInput = {
+    season: "FALL"
+}
+
+export const termPayload = {
+    id: termId.id,        
+    season: "FALL",
+    year: 2023,
+    startTime: "Apr 20 2023",
+    endTime: "Apr 20 2024",
+    courses: []
+}
+
+export const updatedTermPayload = {
+    id: termId.id,        
+    season: "FALL",
+    year: 2023,
+    startTime: yearBefore,
+    endTime: yearAfter,
+    courses: []
+}
+
+export const currentTermPayload = {
+    id: "12434gretbhteyrht",        
+    season: "FALL",
+    year: 2023,
+    startTime: yearBefore,
+    endTime: yearAfter,
+    courses: []
 }

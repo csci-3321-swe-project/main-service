@@ -5,6 +5,33 @@ import client from "../utilities/client";
 
 const router = Router();
 
+/**
+ * @openapi
+ * /users:
+ *  get:
+ *    tags:
+ *      - Users
+ *    description: "Gets the users based upon their email."
+ *    summary: "Gets the users"
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/emailInfo'
+ *    responses:
+ *      200:
+ *        description: "The users were successfully found"
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/userArray'
+ *      400:
+ *        description: "The request body is invalid"
+ *      404:
+ *        description: "Server not found"
+ */
+
 router.get("/", async (req, res, next) => {
   const schema = z.object({
     email: z.string().email(),
@@ -21,6 +48,33 @@ router.get("/", async (req, res, next) => {
     next(err);
   }
 });
+
+/**
+ * @openapi
+ * /users:
+ *  post:
+ *    tags:
+ *      - Users
+ *    summary: "Creates a user"
+ *    description: "Creates a user based off of the given input and returns the created user."
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/userCreationInfo'
+ *    responses:
+ *      201:
+ *        description: "User created succesfully"
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/user'
+ *      400:
+ *        description: "Invalid request body"
+ *      404:
+ *        description: "Server not found"
+ */
 
 router.post("/", async (req, res, next) => {
   const schema = z.object({

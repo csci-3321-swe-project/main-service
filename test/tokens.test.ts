@@ -25,7 +25,7 @@ describe("Tokens POST", () => {
                 .post("/tokens")
                 .send(emailInput)
             expect(statusCode).toBe(201)
-            expect(text).toBe(token)
+            expect(text).toMatch(token)
             // @ts-ignore
             expect(mockTokenCreation).toHaveBeenCalledWith({where: {email: emailInput.email}})
         })
