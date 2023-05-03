@@ -26,10 +26,14 @@ const authorize = (roles: Role[]) => {
     // Attach user object to request data
     const user = await client.user.findUnique({
       where: { id: payload.userId },
+      include: {
+        registrations: {
+          include: {
+            courseSection: { include: { course: { include: { term: true } } } },
+          },
+        },
+      },
     });
-
-    
-
 
     if (!user) {
       res.sendStatus(401);
