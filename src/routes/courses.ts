@@ -438,7 +438,7 @@ router.post(
 // Get Course Section
 router.get(
   "/:courseId/sections/:sectionId",
-  authorize(["ADMINISTRATOR"]),
+  authorize(["ADMINISTRATOR", "PROFESSOR", "STUDENT"]),
   async (req, res, next) => {
     try {
       const courseSection = await client.courseSection.findUniqueOrThrow({
