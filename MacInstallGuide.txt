@@ -1,0 +1,33 @@
+Install Node.js:
+
+Download and install Node.js version 18 from the official website: https://nodejs.org/en/download/
+Install PM2:
+
+Open the Terminal and install PM2 using npm (Node.js package manager): npm install pm2 -g
+Install MongoDB:
+
+Download the MongoDB Community Server from https://www.mongodb.com/try/download/community
+Open the downloaded .tgz file, this will unzip it into a new folder.
+Drag the MongoDB application to your Applications folder.
+Create a data directory where MongoDB will store its data. By default, this is /data/db. If you choose a different directory, ensure it has the correct permissions.
+Add the MongoDB binaries to your system's PATH. To do this:
+Open Terminal.
+Add this line to your ~/.bash_profile or ~/.zshrc file (depends on your shell): export PATH=<mongodb-install-directory>/bin:$PATH. Replace <mongodb-install-directory> with your actual directory.
+Source the file: source ~/.bash_profile or source ~/.zshrc
+Clone the Main Service repository:
+
+Clone the repository onto your local machine using the command: git clone <repository URL>
+Change to the cloned repository's directory: cd <repository directory>
+Create and configure .env file:
+
+Create a new .env file in the repository root directory: touch .env
+Copy the content of .env.template into the new .env file: cp .env.template .env
+Open the .env file in a text editor and set the variable values. For example, set the DATABASE_URL variable to your MongoDB instance URL (default is mongodb://localhost:27017/registration_system).
+Install dependencies and generate the data layer SDK:
+
+Install the necessary dependencies with npm: npm install
+Generate a data layer SDK based on the schema file defined in prisma/schema.prisma and push the schema changes to the database: npm run gen
+Run the server:
+
+For development, run the server with: npm run dev
+For production, first build the source files: npm run build, then start the server with: npm run start.
