@@ -374,10 +374,10 @@ router.delete(
       });
 
       res.status(200).send(deletedTerm);
-      res.status(200).json({ message: "Term deleted successfully" });
+      res.status(200).send({ message: "Term deleted successfully" });
     } catch (err) {
       console.log(err);
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).send({ message: "Internal server error" });
       next(err);
     }
   }
