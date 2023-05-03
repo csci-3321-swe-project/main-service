@@ -16,6 +16,7 @@ function createServer(){
     app.use(express.json());
     app.use(cors());
 
+
     // Routes
     app.use("/courses", courses);
     app.use("/account", account);
