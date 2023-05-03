@@ -373,8 +373,8 @@ router.delete(
         },
       });
 
-      res.status(200).send(deletedTerm);
-      res.status(200).json({ message: "Term deleted successfully" });
+      res.status(200).send({message: "Term deleted successfully", term: deletedTerm});
+
     } catch (err) {
       console.log(err);
       next(err);
